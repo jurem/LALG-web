@@ -1,5 +1,7 @@
 module People exposing (..)
 
+import Http
+import Json.Decode as Decode
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Material
@@ -22,8 +24,7 @@ import Utils exposing (..)
 
 
 type alias Member =
-    { id : Int
-    , name : String
+    { name : String
     , title : String
     , img : String
     , phone : String
@@ -32,27 +33,15 @@ type alias Member =
     }
 
 
-member : Int -> String -> String -> String -> String -> String -> String -> Member
-member id name title img phone email room =
-    { id = id, name = name, title = title, img = img, phone = phone, email = email, room = room }
-
-
-nobody : Member
-nobody =
-    member 0 "" "" "" "" "" ""
-
-
-members : List Member
-members =
-    [ member 0 "Borut Robič" "Head of the laboratory" "robic.png" "+386 1 479 8250" "borut.robic@fri.uni-lj.si" "R2.05"
-    , member 1 "Uroš Čibej" "Teaching Assistant" "cibej.png" "+386 1 479 8232" "uros.cibej@fri.uni-lj.si" "R2.30"
-    , member 2 "Tomaž Dobravec" "Assistant Professor" "dobravec.png" "+386 1 479 8256" "tomaz.dobravec@fri.uni-lj.si" "R2.61"
-    , member 3 "Jurij Mihelič" "Assistant Professor" "mihelic.png" "+386 1 479 8236" "jurij.mihelic@fri.uni-lj.si" "R2.61"
-    , member 4 "Robert Rozman" "Senior Lecturer" "rozman.png" "+386 1 479 8788" "robert.rozman@fri.uni-lj.si" "R2.50"
-    , member 5 "Boštjan Slivnik" "Assistant Professor" "slivnik.png" "+386 1 479 8203" "bostjan.slivnik@fri.uni-lj.si" "R2.14"
-    , member 6 "Blaž Sovdat" "Teaching Assistant" "sovdat.jpg" "" "blaz.sovdat@fri.uni-lj.si" "R2.30"
-    , member 7 "Boštjan Vilfan" "Retired Professor" "vilfan.jpg" "TODO" "+386 1 479 8232" "R2.30"
-    ]
+memberDecoder : Decode.Decoder Member
+memberDecoder =
+    Decode.map6 Member
+        (Decode.field "name" Decode.string)
+        (Decode.field "title" Decode.string)
+        (Decode.field "img" Decode.string)
+        (Decode.field "phone" Decode.string)
+        (Decode.field "email" Decode.string)
+        (Decode.field "room" Decode.string)
 
 
 type alias Associate =
@@ -103,15 +92,23 @@ students =
 
 type alias Model =
     { mdl : Material.Model
-    , raised : Member
+    , raised : String
+    , members : List Member
     }
 
 
 defaultModel : Model
 defaultModel =
     { mdl = Material.model
-    , raised = nobody
+    , raised = ""
+    , members = []
     }
+
+
+init : Cmd Msg
+init =
+    Http.send UpdateMembers
+        (Http.get "data/members.json" (Decode.list memberDecoder))
 
 
 
@@ -120,7 +117,8 @@ defaultModel =
 
 type Msg
     = Mdl (Material.Msg Msg)
-    | Raise Member
+    | Raise String -- the focused member name
+    | UpdateMembers (Result Http.Error (List Member))
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -131,6 +129,12 @@ update msg model =
 
         Raise member ->
             ( { model | raised = member }, Cmd.none )
+
+        UpdateMembers (Ok m) ->
+            ( { model | members = m }, Cmd.none )
+
+        UpdateMembers (Err _) ->
+            ( model, Cmd.none )
 
 
 
@@ -156,14 +160,14 @@ view_opt icon str =
 viewMember : Model -> Member -> Html Msg
 viewMember model member =
     Card.view
-        [ css "width" "100%"
+        [ css "width" "95%"
         , css "margin" "4px 8px 4px 0px"
         , Color.background Utils.card_bg
         , Color.text Utils.card_fg
-        , elev_ model.raised member
+        , elev_ model.raised member.name
         , Elevation.transition 250
-        , Options.onMouseEnter (Raise member)
-        , Options.onMouseLeave (Raise nobody)
+        , Options.onMouseEnter (Raise member.name)
+        , Options.onMouseLeave (Raise "")
         ]
         [ Card.title [ css "background" "rgba(0, 0, 0, 0.05)" ]
             [ Card.head [] [ text member.name ]
@@ -171,7 +175,7 @@ viewMember model member =
             ]
         , Card.text []
             [ Options.img
-                [ Options.attribute <| Html.Attributes.src <| "img/mem-" ++ member.img, css "width" "190px", Elevation.e3 ]
+                [ Options.attribute <| Html.Attributes.src <| "img/" ++ member.img, css "width" "190px", Elevation.e3 ]
                 []
             ]
         , Card.actions [ Card.border ]
@@ -203,7 +207,7 @@ view model =
     div []
         [ h3 [] [ text "Members" ]
         , Grid.grid []
-            (List.map (\x -> Grid.cell [ Grid.size Grid.All 4 ] [ viewMember model x ]) members)
+            (List.map (\x -> Grid.cell [ Grid.size Grid.All 4 ] [ viewMember model x ]) model.members)
         , h3 [] [ text "Associates and guests" ]
         , ul [] (List.map (\x -> viewAssociate x) associates)
         , h3 [] [ text "Students" ]

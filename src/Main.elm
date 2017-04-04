@@ -274,18 +274,26 @@ view_ model =
 view : Model -> Html Msg
 view model =
     -- TODO: production: move style to html
-    --Scheme.topWithScheme Utils.primaryHue Utils.accentedHue <|
-    Html.Lazy.lazy view_ model
+    Scheme.topWithScheme Utils.primaryHue Utils.accentedHue <|
+        Html.Lazy.lazy view_ model
 
 
 
 -- MAIN
 
 
+init : Cmd Msg
+init =
+    Cmd.batch
+        [ Material.init Mdl
+        , Cmd.map PeopleMsg People.init
+        ]
+
+
 main : Program Never Model Msg
 main =
     Html.program
-        { init = ( defaultModel, Material.init Mdl )
+        { init = ( defaultModel, init )
         , update = update
         , subscriptions = \model -> Sub.batch [ Material.subscriptions Mdl model ]
         , view = view

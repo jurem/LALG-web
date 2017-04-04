@@ -1,0 +1,58 @@
+[
+  { "name"  : "Borut Robič",
+    "title" : "Head of the laboratory",
+    "img"   : "mem-robic.png",
+    "phone" : "+386 1 479 8250",
+    "email" : "borut.robic@fri.uni-lj.si",
+    "room"  : "R2.05"
+  },
+  { "name"  : "Uroš Čibej",
+    "title" : "Teaching Assistant",
+    "img"   : "mem-cibej.png",
+    "phone" : "+386 1 479 8232",
+    "email" : "uros.cibej@fri.uni-lj.si",
+    "room"  : "R2.30"
+  },
+  { "name"  : "Tomaž Dobravec",
+    "title" : "Assistant Professor",
+    "img"   : "mem-dobravec.png",
+    "phone" : "+386 1 479 8256",
+    "email" : "tomaz.dobravec@fri.uni-lj.si",
+    "room"  : "R2.61"
+  },
+  { "name"  : "Jurij Mihelič",
+    "title" : "Assistant Professor",
+    "img"   : "mem-mihelic.png",
+    "phone" : "+386 1 479 8236",
+    "email" : "jurij.mihelic@fri.uni-lj.si",
+    "room"  : "R2.61"
+  },
+  { "name"  : "Robert Rozman",
+    "title" : "Senior Lecturer",
+    "img"   : "mem-rozman.png",
+    "phone" : "+386 1 479 8788",
+    "email" : "robert.rozman@fri.uni-lj.si",
+    "room"  : "R2.50"
+  },
+  { "name"  : "Boštjan Slivnik",
+    "title" : "Assistant Professor",
+    "img"   : "mem-slivnik.png",
+    "phone" : "+386 1 479 8203",
+    "email" : "bostjan.slivnik@fri.uni-lj.si",
+    "room"  : "R2.14"
+  },
+  { "name"  : "Blaž Sovdat",
+    "title" : "Teaching Assistant",
+    "img"   : "mem-sovdat.jpg",
+    "phone" : "",
+    "email" : "blaz.sovdat@fri.uni-lj.si",
+    "room"  : "R2.30"
+  },
+  { "name"  : "Boštjan Vilfan",
+    "title" : "Retired Professor",
+    "img"   : "mem-vilfan.jpg",
+    "phone" : "",
+    "email" : "bostjanv@alum.mit.edu",
+    "room"  : "R2.30"
+  }
+]

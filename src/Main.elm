@@ -93,7 +93,7 @@ update msg model =
             lift model (\m x -> { m | teaching = x }) TeachingMsg (Teaching.update submsg model.teaching)
 
         ResearchMsg submsg ->
-            lift model (\m x -> { m | teaching = x }) ResearchMsg (Research.update submsg model.teaching)
+            lift model (\m x -> { m | research = x }) ResearchMsg (Research.update submsg model.research)
 
         PublicationsMsg submsg ->
             lift model (\m x -> { m | publications = x }) PublicationsMsg (Publications.update submsg model.publications)
@@ -241,10 +241,10 @@ viewPage model =
                 Html.map TeachingMsg (Teaching.view model.teaching)
 
             3 ->
-                Html.map ResearchMsg (Research.view model.teaching)
+                Html.map ResearchMsg (Research.view model.research)
 
             4 ->
-                Html.map PublicationsMsg (Publications.view model.teaching)
+                Html.map PublicationsMsg (Publications.view model.publications)
 
             _ ->
                 view404 model
@@ -287,6 +287,7 @@ init =
     Cmd.batch
         [ Material.init Mdl
         , Cmd.map PeopleMsg People.init
+        , Cmd.map TeachingMsg Teaching.init
         ]
 
 

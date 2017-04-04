@@ -1,79 +1,48 @@
 module Teaching exposing (..)
 
+import Http
+import Json.Decode as Decode
 import Html exposing (..)
+import Material
 
 
 -- MODEL
 
 
 type alias Course =
-    { name : String
+    { level : Int
+    , name : String
     , program : String
     , lecturer : String
     }
 
 
-course : String -> String -> String -> Course
-course name program lecturer =
-    { name = name, program = program, lecturer = lecturer }
-
-
-pro : String
-pro =
-    "Undergraduate professional study program Computer and Information Science"
-
-
-uni : String
-uni =
-    "Undergraduate university study program Computer and Information Science"
-
-
-
--- undergraduate
-
-
-courses1 : List Course
-courses1 =
-    [ course "Algorithms and data structures 1" (pro ++ ", Second year") "Jurij Mihelič"
-    , course "Algorithms and data structures 2" (uni ++ ", Second year") "Borut Robič"
-    , course "Compilers and virtual machines" (uni ++ ", Second year") "Boštjan Slivnik"
-    , course "Computability theory" (uni ++ ", Second year") "Borut Robič"
-    , course "Operating systems" (uni ++ ", Second year") "Borut Robič"
-    , course "Programming 2" (uni ++ ", First year") "Boštjan Slivnik"
-    , course "Programming 2" (pro ++ ", First year") "Tomaž Dobravec"
-    , course "Scala programming language" "Technical course" "Uroš Čibej"
-    , course "System Software" (uni ++ ", Third year") "Tomaž Dobravec"
-    ]
-
-
-
--- master
-
-
-courses2 : List Course
-courses2 =
-    [ course "Algorithms" "Master study, First year" "Tomaž Dobravec"
-    , course "Algorithm engineering" "Master study" "Jurij Mihelič"
-    ]
-
-
-
--- PhD
-
-
-courses3 : List Course
-courses3 =
-    [ course "Contemporary apporaches to algorithm design" "PhD study" "Borut Robič, Jurij Mihelič"
-    ]
+courseDecoder : Decode.Decoder Course
+courseDecoder =
+    Decode.map4 Course
+        (Decode.field "level" Decode.int)
+        (Decode.field "name" Decode.string)
+        (Decode.field "program" Decode.string)
+        (Decode.field "lecturer" Decode.string)
 
 
 type alias Model =
-    Int
+    { mdl : Material.Model
+    , courses : List Course
+    }
 
 
 defaultModel : Model
 defaultModel =
-    0
+    { mdl = Material.model
+    , courses = []
+    }
+
+
+init : Cmd Msg
+init =
+    Http.send UpdateCourses
+        (Http.get "data/courses.json" (Decode.list courseDecoder))
 
 
 
@@ -81,7 +50,7 @@ defaultModel =
 
 
 type Msg
-    = NoOp
+    = UpdateCourses (Result Http.Error (List Course))
 
 
 
@@ -90,7 +59,12 @@ type Msg
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    ( model, Cmd.none )
+    case msg of
+        UpdateCourses (Ok c) ->
+            ( { model | courses = c }, Cmd.none )
+
+        UpdateCourses (Err _) ->
+            ( model, Cmd.none )
 
 
 
@@ -111,9 +85,9 @@ view : Model -> Html Msg
 view model =
     div []
         [ h3 [] [ text "Undergraduate courses" ]
-        , ul [] (List.map (\x -> viewCourse model x) courses1)
+        , ul [] (List.map (\x -> viewCourse model x) (List.filter (\x -> 1 == .level x) model.courses))
         , h3 [] [ text "Master courses" ]
-        , ul [] (List.map (\x -> viewCourse model x) courses2)
+        , ul [] (List.map (\x -> viewCourse model x) (List.filter (\x -> 2 == .level x) model.courses))
         , h3 [] [ text "PhD courses" ]
-        , ul [] (List.map (\x -> viewCourse model x) courses3)
+        , ul [] (List.map (\x -> viewCourse model x) (List.filter (\x -> 3 == .level x) model.courses))
         ]

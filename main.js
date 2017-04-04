@@ -16414,6 +16414,367 @@ var _elm_lang$html$Html_Lazy$lazy3 = _elm_lang$virtual_dom$VirtualDom$lazy3;
 var _elm_lang$html$Html_Lazy$lazy2 = _elm_lang$virtual_dom$VirtualDom$lazy2;
 var _elm_lang$html$Html_Lazy$lazy = _elm_lang$virtual_dom$VirtualDom$lazy;
 
+var _elm_lang$http$Native_Http = function() {
+
+
+// ENCODING AND DECODING
+
+function encodeUri(string)
+{
+	return encodeURIComponent(string);
+}
+
+function decodeUri(string)
+{
+	try
+	{
+		return _elm_lang$core$Maybe$Just(decodeURIComponent(string));
+	}
+	catch(e)
+	{
+		return _elm_lang$core$Maybe$Nothing;
+	}
+}
+
+
+// SEND REQUEST
+
+function toTask(request, maybeProgress)
+{
+	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
+	{
+		var xhr = new XMLHttpRequest();
+
+		configureProgress(xhr, maybeProgress);
+
+		xhr.addEventListener('error', function() {
+			callback(_elm_lang$core$Native_Scheduler.fail({ ctor: 'NetworkError' }));
+		});
+		xhr.addEventListener('timeout', function() {
+			callback(_elm_lang$core$Native_Scheduler.fail({ ctor: 'Timeout' }));
+		});
+		xhr.addEventListener('load', function() {
+			callback(handleResponse(xhr, request.expect.responseToResult));
+		});
+
+		try
+		{
+			xhr.open(request.method, request.url, true);
+		}
+		catch (e)
+		{
+			return callback(_elm_lang$core$Native_Scheduler.fail({ ctor: 'BadUrl', _0: request.url }));
+		}
+
+		configureRequest(xhr, request);
+		send(xhr, request.body);
+
+		return function() { xhr.abort(); };
+	});
+}
+
+function configureProgress(xhr, maybeProgress)
+{
+	if (maybeProgress.ctor === 'Nothing')
+	{
+		return;
+	}
+
+	xhr.addEventListener('progress', function(event) {
+		if (!event.lengthComputable)
+		{
+			return;
+		}
+		_elm_lang$core$Native_Scheduler.rawSpawn(maybeProgress._0({
+			bytes: event.loaded,
+			bytesExpected: event.total
+		}));
+	});
+}
+
+function configureRequest(xhr, request)
+{
+	function setHeader(pair)
+	{
+		xhr.setRequestHeader(pair._0, pair._1);
+	}
+
+	A2(_elm_lang$core$List$map, setHeader, request.headers);
+	xhr.responseType = request.expect.responseType;
+	xhr.withCredentials = request.withCredentials;
+
+	if (request.timeout.ctor === 'Just')
+	{
+		xhr.timeout = request.timeout._0;
+	}
+}
+
+function send(xhr, body)
+{
+	switch (body.ctor)
+	{
+		case 'EmptyBody':
+			xhr.send();
+			return;
+
+		case 'StringBody':
+			xhr.setRequestHeader('Content-Type', body._0);
+			xhr.send(body._1);
+			return;
+
+		case 'FormDataBody':
+			xhr.send(body._0);
+			return;
+	}
+}
+
+
+// RESPONSES
+
+function handleResponse(xhr, responseToResult)
+{
+	var response = toResponse(xhr);
+
+	if (xhr.status < 200 || 300 <= xhr.status)
+	{
+		response.body = xhr.responseText;
+		return _elm_lang$core$Native_Scheduler.fail({
+			ctor: 'BadStatus',
+			_0: response
+		});
+	}
+
+	var result = responseToResult(response);
+
+	if (result.ctor === 'Ok')
+	{
+		return _elm_lang$core$Native_Scheduler.succeed(result._0);
+	}
+	else
+	{
+		response.body = xhr.responseText;
+		return _elm_lang$core$Native_Scheduler.fail({
+			ctor: 'BadPayload',
+			_0: result._0,
+			_1: response
+		});
+	}
+}
+
+function toResponse(xhr)
+{
+	return {
+		status: { code: xhr.status, message: xhr.statusText },
+		headers: parseHeaders(xhr.getAllResponseHeaders()),
+		url: xhr.responseURL,
+		body: xhr.response
+	};
+}
+
+function parseHeaders(rawHeaders)
+{
+	var headers = _elm_lang$core$Dict$empty;
+
+	if (!rawHeaders)
+	{
+		return headers;
+	}
+
+	var headerPairs = rawHeaders.split('\u000d\u000a');
+	for (var i = headerPairs.length; i--; )
+	{
+		var headerPair = headerPairs[i];
+		var index = headerPair.indexOf('\u003a\u0020');
+		if (index > 0)
+		{
+			var key = headerPair.substring(0, index);
+			var value = headerPair.substring(index + 2);
+
+			headers = A3(_elm_lang$core$Dict$update, key, function(oldValue) {
+				if (oldValue.ctor === 'Just')
+				{
+					return _elm_lang$core$Maybe$Just(value + ', ' + oldValue._0);
+				}
+				return _elm_lang$core$Maybe$Just(value);
+			}, headers);
+		}
+	}
+
+	return headers;
+}
+
+
+// EXPECTORS
+
+function expectStringResponse(responseToResult)
+{
+	return {
+		responseType: 'text',
+		responseToResult: responseToResult
+	};
+}
+
+function mapExpect(func, expect)
+{
+	return {
+		responseType: expect.responseType,
+		responseToResult: function(response) {
+			var convertedResponse = expect.responseToResult(response);
+			return A2(_elm_lang$core$Result$map, func, convertedResponse);
+		}
+	};
+}
+
+
+// BODY
+
+function multipart(parts)
+{
+	var formData = new FormData();
+
+	while (parts.ctor !== '[]')
+	{
+		var part = parts._0;
+		formData.append(part._0, part._1);
+		parts = parts._1;
+	}
+
+	return { ctor: 'FormDataBody', _0: formData };
+}
+
+return {
+	toTask: F2(toTask),
+	expectStringResponse: expectStringResponse,
+	mapExpect: F2(mapExpect),
+	multipart: multipart,
+	encodeUri: encodeUri,
+	decodeUri: decodeUri
+};
+
+}();
+
+var _elm_lang$http$Http_Internal$map = F2(
+	function (func, request) {
+		return _elm_lang$core$Native_Utils.update(
+			request,
+			{
+				expect: A2(_elm_lang$http$Native_Http.mapExpect, func, request.expect)
+			});
+	});
+var _elm_lang$http$Http_Internal$RawRequest = F7(
+	function (a, b, c, d, e, f, g) {
+		return {method: a, headers: b, url: c, body: d, expect: e, timeout: f, withCredentials: g};
+	});
+var _elm_lang$http$Http_Internal$Request = function (a) {
+	return {ctor: 'Request', _0: a};
+};
+var _elm_lang$http$Http_Internal$Expect = {ctor: 'Expect'};
+var _elm_lang$http$Http_Internal$FormDataBody = {ctor: 'FormDataBody'};
+var _elm_lang$http$Http_Internal$StringBody = F2(
+	function (a, b) {
+		return {ctor: 'StringBody', _0: a, _1: b};
+	});
+var _elm_lang$http$Http_Internal$EmptyBody = {ctor: 'EmptyBody'};
+var _elm_lang$http$Http_Internal$Header = F2(
+	function (a, b) {
+		return {ctor: 'Header', _0: a, _1: b};
+	});
+
+var _elm_lang$http$Http$decodeUri = _elm_lang$http$Native_Http.decodeUri;
+var _elm_lang$http$Http$encodeUri = _elm_lang$http$Native_Http.encodeUri;
+var _elm_lang$http$Http$expectStringResponse = _elm_lang$http$Native_Http.expectStringResponse;
+var _elm_lang$http$Http$expectJson = function (decoder) {
+	return _elm_lang$http$Http$expectStringResponse(
+		function (response) {
+			return A2(_elm_lang$core$Json_Decode$decodeString, decoder, response.body);
+		});
+};
+var _elm_lang$http$Http$expectString = _elm_lang$http$Http$expectStringResponse(
+	function (response) {
+		return _elm_lang$core$Result$Ok(response.body);
+	});
+var _elm_lang$http$Http$multipartBody = _elm_lang$http$Native_Http.multipart;
+var _elm_lang$http$Http$stringBody = _elm_lang$http$Http_Internal$StringBody;
+var _elm_lang$http$Http$jsonBody = function (value) {
+	return A2(
+		_elm_lang$http$Http_Internal$StringBody,
+		'application/json',
+		A2(_elm_lang$core$Json_Encode$encode, 0, value));
+};
+var _elm_lang$http$Http$emptyBody = _elm_lang$http$Http_Internal$EmptyBody;
+var _elm_lang$http$Http$header = _elm_lang$http$Http_Internal$Header;
+var _elm_lang$http$Http$request = _elm_lang$http$Http_Internal$Request;
+var _elm_lang$http$Http$post = F3(
+	function (url, body, decoder) {
+		return _elm_lang$http$Http$request(
+			{
+				method: 'POST',
+				headers: {ctor: '[]'},
+				url: url,
+				body: body,
+				expect: _elm_lang$http$Http$expectJson(decoder),
+				timeout: _elm_lang$core$Maybe$Nothing,
+				withCredentials: false
+			});
+	});
+var _elm_lang$http$Http$get = F2(
+	function (url, decoder) {
+		return _elm_lang$http$Http$request(
+			{
+				method: 'GET',
+				headers: {ctor: '[]'},
+				url: url,
+				body: _elm_lang$http$Http$emptyBody,
+				expect: _elm_lang$http$Http$expectJson(decoder),
+				timeout: _elm_lang$core$Maybe$Nothing,
+				withCredentials: false
+			});
+	});
+var _elm_lang$http$Http$getString = function (url) {
+	return _elm_lang$http$Http$request(
+		{
+			method: 'GET',
+			headers: {ctor: '[]'},
+			url: url,
+			body: _elm_lang$http$Http$emptyBody,
+			expect: _elm_lang$http$Http$expectString,
+			timeout: _elm_lang$core$Maybe$Nothing,
+			withCredentials: false
+		});
+};
+var _elm_lang$http$Http$toTask = function (_p0) {
+	var _p1 = _p0;
+	return A2(_elm_lang$http$Native_Http.toTask, _p1._0, _elm_lang$core$Maybe$Nothing);
+};
+var _elm_lang$http$Http$send = F2(
+	function (resultToMessage, request) {
+		return A2(
+			_elm_lang$core$Task$attempt,
+			resultToMessage,
+			_elm_lang$http$Http$toTask(request));
+	});
+var _elm_lang$http$Http$Response = F4(
+	function (a, b, c, d) {
+		return {url: a, status: b, headers: c, body: d};
+	});
+var _elm_lang$http$Http$BadPayload = F2(
+	function (a, b) {
+		return {ctor: 'BadPayload', _0: a, _1: b};
+	});
+var _elm_lang$http$Http$BadStatus = function (a) {
+	return {ctor: 'BadStatus', _0: a};
+};
+var _elm_lang$http$Http$NetworkError = {ctor: 'NetworkError'};
+var _elm_lang$http$Http$Timeout = {ctor: 'Timeout'};
+var _elm_lang$http$Http$BadUrl = function (a) {
+	return {ctor: 'BadUrl', _0: a};
+};
+var _elm_lang$http$Http$StringPart = F2(
+	function (a, b) {
+		return {ctor: 'StringPart', _0: a, _1: b};
+	});
+var _elm_lang$http$Http$stringPart = _elm_lang$http$Http$StringPart;
+
 var _user$project$Utils$accentedHue = _debois$elm_mdl$Material_Color$Pink;
 var _user$project$Utils$primaryHue = _debois$elm_mdl$Material_Color$Green;
 var _user$project$Utils$header_bg = A2(_debois$elm_mdl$Material_Color$color, _user$project$Utils$primaryHue, _debois$elm_mdl$Material_Color$S300);
@@ -16556,6 +16917,11 @@ var _user$project$People$elev_ = F2(
 	function (x, y) {
 		return _elm_lang$core$Native_Utils.eq(x, y) ? _debois$elm_mdl$Material_Elevation$e16 : _debois$elm_mdl$Material_Elevation$e2;
 	});
+var _user$project$People$defaultModel = {
+	mdl: _debois$elm_mdl$Material$model,
+	raised: '',
+	members: {ctor: '[]'}
+};
 var _user$project$People$student = F3(
 	function (name, role, year) {
 		return {name: name, role: role, year: year};
@@ -16610,49 +16976,19 @@ var _user$project$People$associates = {
 		}
 	}
 };
-var _user$project$People$member = F7(
-	function (id, name, title, img, phone, email, room) {
-		return {id: id, name: name, title: title, img: img, phone: phone, email: email, room: room};
+var _user$project$People$Member = F6(
+	function (a, b, c, d, e, f) {
+		return {name: a, title: b, img: c, phone: d, email: e, room: f};
 	});
-var _user$project$People$nobody = A7(_user$project$People$member, 0, '', '', '', '', '', '');
-var _user$project$People$defaultModel = {mdl: _debois$elm_mdl$Material$model, raised: _user$project$People$nobody};
-var _user$project$People$members = {
-	ctor: '::',
-	_0: A7(_user$project$People$member, 0, 'Borut Robič', 'Head of the laboratory', 'robic.png', '+386 1 479 8250', 'borut.robic@fri.uni-lj.si', 'R2.05'),
-	_1: {
-		ctor: '::',
-		_0: A7(_user$project$People$member, 1, 'Uroš Čibej', 'Teaching Assistant', 'cibej.png', '+386 1 479 8232', 'uros.cibej@fri.uni-lj.si', 'R2.30'),
-		_1: {
-			ctor: '::',
-			_0: A7(_user$project$People$member, 2, 'Tomaž Dobravec', 'Assistant Professor', 'dobravec.png', '+386 1 479 8256', 'tomaz.dobravec@fri.uni-lj.si', 'R2.61'),
-			_1: {
-				ctor: '::',
-				_0: A7(_user$project$People$member, 3, 'Jurij Mihelič', 'Assistant Professor', 'mihelic.png', '+386 1 479 8236', 'jurij.mihelic@fri.uni-lj.si', 'R2.61'),
-				_1: {
-					ctor: '::',
-					_0: A7(_user$project$People$member, 4, 'Robert Rozman', 'Senior Lecturer', 'rozman.png', '+386 1 479 8788', 'robert.rozman@fri.uni-lj.si', 'R2.50'),
-					_1: {
-						ctor: '::',
-						_0: A7(_user$project$People$member, 5, 'Boštjan Slivnik', 'Assistant Professor', 'slivnik.png', '+386 1 479 8203', 'bostjan.slivnik@fri.uni-lj.si', 'R2.14'),
-						_1: {
-							ctor: '::',
-							_0: A7(_user$project$People$member, 6, 'Blaž Sovdat', 'Teaching Assistant', 'sovdat.jpg', '', 'blaz.sovdat@fri.uni-lj.si', 'R2.30'),
-							_1: {
-								ctor: '::',
-								_0: A7(_user$project$People$member, 7, 'Boštjan Vilfan', 'Retired Professor', 'vilfan.jpg', 'TODO', '+386 1 479 8232', 'R2.30'),
-								_1: {ctor: '[]'}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-};
-var _user$project$People$Member = F7(
-	function (a, b, c, d, e, f, g) {
-		return {id: a, name: b, title: c, img: d, phone: e, email: f, room: g};
-	});
+var _user$project$People$memberDecoder = A7(
+	_elm_lang$core$Json_Decode$map6,
+	_user$project$People$Member,
+	A2(_elm_lang$core$Json_Decode$field, 'name', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'title', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'img', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'phone', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'email', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'room', _elm_lang$core$Json_Decode$string));
 var _user$project$People$Associate = F4(
 	function (a, b, c, d) {
 		return {name: a, role: b, from: c, year: d};
@@ -16661,10 +16997,20 @@ var _user$project$People$Student = F3(
 	function (a, b, c) {
 		return {name: a, role: b, year: c};
 	});
-var _user$project$People$Model = F2(
-	function (a, b) {
-		return {mdl: a, raised: b};
+var _user$project$People$Model = F3(
+	function (a, b, c) {
+		return {mdl: a, raised: b, members: c};
 	});
+var _user$project$People$UpdateMembers = function (a) {
+	return {ctor: 'UpdateMembers', _0: a};
+};
+var _user$project$People$init = A2(
+	_elm_lang$http$Http$send,
+	_user$project$People$UpdateMembers,
+	A2(
+		_elm_lang$http$Http$get,
+		'data/members.json',
+		_elm_lang$core$Json_Decode$list(_user$project$People$memberDecoder)));
 var _user$project$People$Raise = function (a) {
 	return {ctor: 'Raise', _0: a};
 };
@@ -16674,7 +17020,7 @@ var _user$project$People$viewMember = F2(
 			_debois$elm_mdl$Material_Card$view,
 			{
 				ctor: '::',
-				_0: A2(_debois$elm_mdl$Material_Options$css, 'width', '100%'),
+				_0: A2(_debois$elm_mdl$Material_Options$css, 'width', '95%'),
 				_1: {
 					ctor: '::',
 					_0: A2(_debois$elm_mdl$Material_Options$css, 'margin', '4px 8px 4px 0px'),
@@ -16686,18 +17032,18 @@ var _user$project$People$viewMember = F2(
 							_0: _debois$elm_mdl$Material_Color$text(_user$project$Utils$card_fg),
 							_1: {
 								ctor: '::',
-								_0: A2(_user$project$People$elev_, model.raised, member),
+								_0: A2(_user$project$People$elev_, model.raised, member.name),
 								_1: {
 									ctor: '::',
 									_0: _debois$elm_mdl$Material_Elevation$transition(250),
 									_1: {
 										ctor: '::',
 										_0: _debois$elm_mdl$Material_Options$onMouseEnter(
-											_user$project$People$Raise(member)),
+											_user$project$People$Raise(member.name)),
 										_1: {
 											ctor: '::',
 											_0: _debois$elm_mdl$Material_Options$onMouseLeave(
-												_user$project$People$Raise(_user$project$People$nobody)),
+												_user$project$People$Raise('')),
 											_1: {ctor: '[]'}
 										}
 									}
@@ -16752,7 +17098,7 @@ var _user$project$People$viewMember = F2(
 									ctor: '::',
 									_0: _debois$elm_mdl$Material_Options$attribute(
 										_elm_lang$html$Html_Attributes$src(
-											A2(_elm_lang$core$Basics_ops['++'], 'img/mem-', member.img))),
+											A2(_elm_lang$core$Basics_ops['++'], 'img/', member.img))),
 									_1: {
 										ctor: '::',
 										_0: A2(_debois$elm_mdl$Material_Options$css, 'width', '190px'),
@@ -16828,7 +17174,7 @@ var _user$project$People$view = function (model) {
 									_1: {ctor: '[]'}
 								});
 						},
-						_user$project$People$members)),
+						model.members)),
 				_1: {
 					ctor: '::',
 					_0: A2(
@@ -16885,16 +17231,29 @@ var _user$project$People$Mdl = function (a) {
 var _user$project$People$update = F2(
 	function (msg, model) {
 		var _p0 = msg;
-		if (_p0.ctor === 'Mdl') {
-			return A3(_debois$elm_mdl$Material$update, _user$project$People$Mdl, _p0._0, model);
-		} else {
-			return {
-				ctor: '_Tuple2',
-				_0: _elm_lang$core$Native_Utils.update(
-					model,
-					{raised: _p0._0}),
-				_1: _elm_lang$core$Platform_Cmd$none
-			};
+		switch (_p0.ctor) {
+			case 'Mdl':
+				return A3(_debois$elm_mdl$Material$update, _user$project$People$Mdl, _p0._0, model);
+			case 'Raise':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{raised: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				if (_p0._0.ctor === 'Ok') {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{members: _p0._0._0}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				} else {
+					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+				}
 		}
 	});
 
@@ -16932,100 +17291,6 @@ var _user$project$Teaching$viewCourse = F2(
 				}
 			});
 	});
-var _user$project$Teaching$update = F2(
-	function (msg, model) {
-		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-	});
-var _user$project$Teaching$defaultModel = 0;
-var _user$project$Teaching$uni = 'Undergraduate university study program Computer and Information Science';
-var _user$project$Teaching$pro = 'Undergraduate professional study program Computer and Information Science';
-var _user$project$Teaching$course = F3(
-	function (name, program, lecturer) {
-		return {name: name, program: program, lecturer: lecturer};
-	});
-var _user$project$Teaching$courses1 = {
-	ctor: '::',
-	_0: A3(
-		_user$project$Teaching$course,
-		'Algorithms and data structures 1',
-		A2(_elm_lang$core$Basics_ops['++'], _user$project$Teaching$pro, ', Second year'),
-		'Jurij Mihelič'),
-	_1: {
-		ctor: '::',
-		_0: A3(
-			_user$project$Teaching$course,
-			'Algorithms and data structures 2',
-			A2(_elm_lang$core$Basics_ops['++'], _user$project$Teaching$uni, ', Second year'),
-			'Borut Robič'),
-		_1: {
-			ctor: '::',
-			_0: A3(
-				_user$project$Teaching$course,
-				'Compilers and virtual machines',
-				A2(_elm_lang$core$Basics_ops['++'], _user$project$Teaching$uni, ', Second year'),
-				'Boštjan Slivnik'),
-			_1: {
-				ctor: '::',
-				_0: A3(
-					_user$project$Teaching$course,
-					'Computability theory',
-					A2(_elm_lang$core$Basics_ops['++'], _user$project$Teaching$uni, ', Second year'),
-					'Borut Robič'),
-				_1: {
-					ctor: '::',
-					_0: A3(
-						_user$project$Teaching$course,
-						'Operating systems',
-						A2(_elm_lang$core$Basics_ops['++'], _user$project$Teaching$uni, ', Second year'),
-						'Borut Robič'),
-					_1: {
-						ctor: '::',
-						_0: A3(
-							_user$project$Teaching$course,
-							'Programming 2',
-							A2(_elm_lang$core$Basics_ops['++'], _user$project$Teaching$uni, ', First year'),
-							'Boštjan Slivnik'),
-						_1: {
-							ctor: '::',
-							_0: A3(
-								_user$project$Teaching$course,
-								'Programming 2',
-								A2(_elm_lang$core$Basics_ops['++'], _user$project$Teaching$pro, ', First year'),
-								'Tomaž Dobravec'),
-							_1: {
-								ctor: '::',
-								_0: A3(_user$project$Teaching$course, 'Scala programming language', 'Technical course', 'Uroš Čibej'),
-								_1: {
-									ctor: '::',
-									_0: A3(
-										_user$project$Teaching$course,
-										'System Software',
-										A2(_elm_lang$core$Basics_ops['++'], _user$project$Teaching$uni, ', Third year'),
-										'Tomaž Dobravec'),
-									_1: {ctor: '[]'}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-};
-var _user$project$Teaching$courses2 = {
-	ctor: '::',
-	_0: A3(_user$project$Teaching$course, 'Algorithms', 'Master study, First year', 'Tomaž Dobravec'),
-	_1: {
-		ctor: '::',
-		_0: A3(_user$project$Teaching$course, 'Algorithm engineering', 'Master study', 'Jurij Mihelič'),
-		_1: {ctor: '[]'}
-	}
-};
-var _user$project$Teaching$courses3 = {
-	ctor: '::',
-	_0: A3(_user$project$Teaching$course, 'Contemporary apporaches to algorithm design', 'PhD study', 'Borut Robič, Jurij Mihelič'),
-	_1: {ctor: '[]'}
-};
 var _user$project$Teaching$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -17050,7 +17315,16 @@ var _user$project$Teaching$view = function (model) {
 						function (x) {
 							return A2(_user$project$Teaching$viewCourse, model, x);
 						},
-						_user$project$Teaching$courses1)),
+						A2(
+							_elm_lang$core$List$filter,
+							function (x) {
+								return _elm_lang$core$Native_Utils.eq(
+									1,
+									function (_) {
+										return _.level;
+									}(x));
+							},
+							model.courses))),
 				_1: {
 					ctor: '::',
 					_0: A2(
@@ -17071,7 +17345,16 @@ var _user$project$Teaching$view = function (model) {
 								function (x) {
 									return A2(_user$project$Teaching$viewCourse, model, x);
 								},
-								_user$project$Teaching$courses2)),
+								A2(
+									_elm_lang$core$List$filter,
+									function (x) {
+										return _elm_lang$core$Native_Utils.eq(
+											2,
+											function (_) {
+												return _.level;
+											}(x));
+									},
+									model.courses))),
 						_1: {
 							ctor: '::',
 							_0: A2(
@@ -17092,7 +17375,16 @@ var _user$project$Teaching$view = function (model) {
 										function (x) {
 											return A2(_user$project$Teaching$viewCourse, model, x);
 										},
-										_user$project$Teaching$courses3)),
+										A2(
+											_elm_lang$core$List$filter,
+											function (x) {
+												return _elm_lang$core$Native_Utils.eq(
+													3,
+													function (_) {
+														return _.level;
+													}(x));
+											},
+											model.courses))),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -17101,11 +17393,50 @@ var _user$project$Teaching$view = function (model) {
 			}
 		});
 };
-var _user$project$Teaching$Course = F3(
-	function (a, b, c) {
-		return {name: a, program: b, lecturer: c};
+var _user$project$Teaching$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		if (_p0._0.ctor === 'Ok') {
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					model,
+					{courses: _p0._0._0}),
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
+		} else {
+			return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+		}
 	});
-var _user$project$Teaching$NoOp = {ctor: 'NoOp'};
+var _user$project$Teaching$defaultModel = {
+	mdl: _debois$elm_mdl$Material$model,
+	courses: {ctor: '[]'}
+};
+var _user$project$Teaching$Course = F4(
+	function (a, b, c, d) {
+		return {level: a, name: b, program: c, lecturer: d};
+	});
+var _user$project$Teaching$courseDecoder = A5(
+	_elm_lang$core$Json_Decode$map4,
+	_user$project$Teaching$Course,
+	A2(_elm_lang$core$Json_Decode$field, 'level', _elm_lang$core$Json_Decode$int),
+	A2(_elm_lang$core$Json_Decode$field, 'name', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'program', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'lecturer', _elm_lang$core$Json_Decode$string));
+var _user$project$Teaching$Model = F2(
+	function (a, b) {
+		return {mdl: a, courses: b};
+	});
+var _user$project$Teaching$UpdateCourses = function (a) {
+	return {ctor: 'UpdateCourses', _0: a};
+};
+var _user$project$Teaching$init = A2(
+	_elm_lang$http$Http$send,
+	_user$project$Teaching$UpdateCourses,
+	A2(
+		_elm_lang$http$Http$get,
+		'data/courses.json',
+		_elm_lang$core$Json_Decode$list(_user$project$Teaching$courseDecoder)));
 
 var _user$project$Research$view = function (model) {
 	return A2(
@@ -18299,12 +18630,12 @@ var _user$project$Main$viewPage = function (model) {
 							return A2(
 								_elm_lang$html$Html$map,
 								_user$project$Main$ResearchMsg,
-								_user$project$Research$view(model.teaching));
+								_user$project$Research$view(model.research));
 						case 4:
 							return A2(
 								_elm_lang$html$Html$map,
 								_user$project$Main$PublicationsMsg,
-								_user$project$Publications$view(model.teaching));
+								_user$project$Publications$view(model.publications));
 						default:
 							return _user$project$Main$view404(model);
 					}
@@ -18372,10 +18703,10 @@ var _user$project$Main$update = F2(
 						function (m, x) {
 							return _elm_lang$core$Native_Utils.update(
 								m,
-								{teaching: x});
+								{research: x});
 						}),
 					_user$project$Main$ResearchMsg,
-					A2(_user$project$Research$update, _p4._0, model.teaching));
+					A2(_user$project$Research$update, _p4._0, model.research));
 			default:
 				return A4(
 					_user$project$Main$lift,
@@ -18448,15 +18779,29 @@ var _user$project$Main$view_ = function (model) {
 		});
 };
 var _user$project$Main$view = function (model) {
-	return A2(_elm_lang$html$Html_Lazy$lazy, _user$project$Main$view_, model);
+	return A3(
+		_debois$elm_mdl$Material_Scheme$topWithScheme,
+		_user$project$Utils$primaryHue,
+		_user$project$Utils$accentedHue,
+		A2(_elm_lang$html$Html_Lazy$lazy, _user$project$Main$view_, model));
 };
+var _user$project$Main$init = _elm_lang$core$Platform_Cmd$batch(
+	{
+		ctor: '::',
+		_0: _debois$elm_mdl$Material$init(_user$project$Main$Mdl),
+		_1: {
+			ctor: '::',
+			_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$PeopleMsg, _user$project$People$init),
+			_1: {
+				ctor: '::',
+				_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$TeachingMsg, _user$project$Teaching$init),
+				_1: {ctor: '[]'}
+			}
+		}
+	});
 var _user$project$Main$main = _elm_lang$html$Html$program(
 	{
-		init: {
-			ctor: '_Tuple2',
-			_0: _user$project$Main$defaultModel,
-			_1: _debois$elm_mdl$Material$init(_user$project$Main$Mdl)
-		},
+		init: {ctor: '_Tuple2', _0: _user$project$Main$defaultModel, _1: _user$project$Main$init},
 		update: _user$project$Main$update,
 		subscriptions: function (model) {
 			return _elm_lang$core$Platform_Sub$batch(

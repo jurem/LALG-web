@@ -1,0 +1,61 @@
+[ { "level"     : 1,
+    "name"      : "Algorithms and data structures 1",
+    "program"   : "Undergraduate professional study program Computer and Information Science, Second year",
+    "lecturer"  : "Jurij Mihelič"
+  },
+  { "level"     : 1,
+    "name"      : "Algorithms and data structures 2",
+    "program"   : "Undergraduate university study program Computer and Information Science, Second year",
+    "lecturer"  : "Borut Robič"
+  },
+  { "level"     : 1,
+    "name"      : "Compilers and virtual machines",
+    "program"   : "Undergraduate university study program Computer and Information Science, Third year",
+    "lecturer"  : "Boštjan Slivnik"
+  },
+  { "level"     : 1,
+    "name"      : "Computability theory",
+    "program"   : "Undergraduate university study program Computer and Information Science, Second year",
+    "lecturer"  : "Borut Robič"
+  },
+  { "level"     : 1,
+    "name"      : "Operating systems",
+    "program"   : "Undergraduate university study program Computer and Information Science, Second year",
+    "lecturer"  : "Borut Robič"
+  },
+  { "level"     : 1,
+    "name"      : "Programming 2",
+    "program"   : "Undergraduate university study program Computer and Information Science, First year",
+    "lecturer"  : "Boštjan Slivnik"
+  },
+  { "level"     : 1,
+    "name"      : "Programming 2",
+    "program"   : "Undergraduate professional study program Computer and Information Science, Second year",
+    "lecturer"  : "Tomaž Dobravec"
+  },
+  { "level"     : 1,
+    "name"      : "Scala programming language",
+    "program"   : "Technical course",
+    "lecturer"  : "Uroš Čibej"
+  },
+  { "level"     : 1,
+    "name"      : "System Software",
+    "program"   : "Undergraduate university study program Computer and Information Science, Third year",
+    "lecturer"  : "Tomaž Dobravec"
+  },
+  { "level"     : 2,
+    "name"      : "Algorithms",
+    "program"   : "Master study, First year",
+    "lecturer"  : "Tomaž Dobravec"
+  },
+  { "level"     : 2,
+    "name"      : "Algorithm engineering",
+    "program"   : "Master study",
+    "lecturer"  : "Jurij Mihelič"
+  },
+  { "level"     : 3,
+    "name"      : "Contemporary apporaches to algorithm design",
+    "program"   : "PhD study",
+    "lecturer"  : "Borut Robič, Jurij Mihelič"
+  }
+]

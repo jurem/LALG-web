@@ -10,7 +10,6 @@ import Material.Typography as Typography
 import Material.Scheme as Scheme
 import Material.Color as Color
 import Material.Elevation as Elevation
-import Material.Typography as Typography
 import Material.Icon as Icon
 import Material.Footer as Footer
 import Material.Card as Card
@@ -25,6 +24,7 @@ import People
 import Teaching
 import Research
 import Publications
+import LALGinar
 
 
 -- MODEL
@@ -37,17 +37,21 @@ type alias Model =
     , teaching : Teaching.Model
     , research : Research.Model
     , publications : Publications.Model
+    , seminars : LALGinar.Model
     }
 
 
 defaultModel : Model
 defaultModel =
-    { mdl = Layout.setTabsWidth 50 Material.model --??? setTabsWidth
+    { mdl =
+        Layout.setTabsWidth 50 Material.model
+        --??? setTabsWidth
     , tab = 0
     , people = People.defaultModel
     , teaching = Teaching.defaultModel
     , research = Research.defaultModel
     , publications = Publications.defaultModel
+    , seminars = LALGinar.defaultModel
     }
 
 
@@ -62,17 +66,28 @@ type Msg
     | TeachingMsg Teaching.Msg
     | ResearchMsg Research.Msg
     | PublicationsMsg Publications.Msg
+    | LALGinarMsg LALGinar.Msg
 
 
 {-|
 | Lift a submodel and submsg to (Model, Cmd Msg)
 -}
 lift :
-    Model -- original model
-    -> (Model -> submodel -> Model) -- updates model's submodel
-    -> (submsg -> Msg) -- converts sub message to Msg
-    -> ( submodel, Cmd submsg ) -- sub model and sub message
-    -> ( Model, Cmd Msg ) -- model and message
+    Model
+    -- original model
+    -> (Model -> submodel -> Model)
+       -- updates model's submodel
+    -> (submsg -> Msg)
+       -- converts sub message to Msg
+    -> ( submodel, Cmd submsg )
+       -- sub model and sub message
+    -> ( Model, Cmd Msg )
+
+
+
+-- model and message
+
+
 lift mdl liftsubmdl liftsubmsg ( submdl, subcmd ) =
     ( liftsubmdl mdl submdl, Cmd.map liftsubmsg subcmd )
 
@@ -92,11 +107,16 @@ update msg model =
         TeachingMsg submsg ->
             lift model (\m x -> { m | teaching = x }) TeachingMsg (Teaching.update submsg model.teaching)
 
-        ResearchMsg submsg ->
-            lift model (\m x -> { m | research = x }) ResearchMsg (Research.update submsg model.research)
+        ResearchMsg (Research.LALGinarView) ->
+            ( { model | tab = 5 }, Cmd.none )
 
+        --ResearchMsg submsg ->
+        --    lift model (\m x -> { m | research = x }) ResearchMsg (Research.update submsg model.research)
         PublicationsMsg submsg ->
             lift model (\m x -> { m | publications = x }) PublicationsMsg (Publications.update submsg model.publications)
+
+        LALGinarMsg submsg ->
+            lift model (\m x -> { m | seminars = x }) LALGinarMsg (LALGinar.update submsg model.seminars)
 
 
 
@@ -229,7 +249,8 @@ viewPage model =
         , Color.background Utils.page_bg
         , Color.text Utils.page_fg
         ]
-        [ br [] [] -- seems to be a bug in elm-mdl: if first element is a header, the border is to big
+        [ br [] []
+          -- seems to be a bug in elm-mdl: if first element is a header, the border is to big
         , (case model.tab of
             0 ->
                 viewMain model
@@ -246,10 +267,14 @@ viewPage model =
             4 ->
                 Html.map PublicationsMsg (Publications.view model.publications)
 
+            5 ->
+                Html.map LALGinarMsg (LALGinar.view model.seminars)
+
             _ ->
                 view404 model
           )
-        , br [] [] -- additonal space
+        , br [] []
+          -- additonal space
         ]
 
 
@@ -288,6 +313,7 @@ init =
         [ Material.init Mdl
         , Cmd.map PeopleMsg People.init
         , Cmd.map TeachingMsg Teaching.init
+        , Cmd.map LALGinarMsg LALGinar.init
         ]
 
 

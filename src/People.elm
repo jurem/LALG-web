@@ -59,7 +59,7 @@ associate name role from year =
 
 associates : List Associate
 associates =
-    [ associate "Vojta Vojtech" "visiting student" "Prague, Czech" "2016"
+    [ associate "Vojtech Vorel" "visiting student" "Prague, Czech" "2016"
     , associate "Jan Pérhač" "visiting student" "Košice, Slovakia" "2016"
     , associate "Ivan Halupka" "visiting student" "Košice, Slovakia" "2014"
     , associate "Christophe Rapine" "visiting researcher" "Grenoble, France" "2002"
@@ -117,7 +117,8 @@ init =
 
 type Msg
     = Mdl (Material.Msg Msg)
-    | Raise String -- the focused member name
+    | Raise String
+      -- the focused member name
     | UpdateMembers (Result Http.Error (List Member))
 
 

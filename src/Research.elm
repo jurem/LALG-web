@@ -1,6 +1,7 @@
 module Research exposing (..)
 
 import Html exposing (..)
+import Html.Events exposing (onClick)
 
 
 -- MODEL
@@ -20,7 +21,7 @@ defaultModel =
 
 
 type Msg
-    = NoOp
+    = LALGinarView
 
 
 
@@ -42,4 +43,5 @@ view model =
         [ div [] [ h3 [] [ text "Topics" ] ]
         , div [] [ h3 [] [ text "Projects" ] ]
         , div [] [ h3 [] [ text "Collaboration" ] ]
+        , div [] [ text "For our active discussion, please check the webpage of laboratory seminars, a.k.a. ", button [ onClick LALGinarView ] [ text "LALGinars" ] ]
         ]

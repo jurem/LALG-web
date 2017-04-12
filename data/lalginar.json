@@ -1,0 +1,466 @@
+[{
+        "author": "Vojtech Vorel",
+        "title": "Efficient Encodings of the At-Most-One Constraint for SAT Solving",
+        "date": "2016-10-28"
+    },
+    {
+        "author": "Ján Perháč",
+        "title": "Towards Formalization of Component-Based Systems",
+        "date": "2016-10-21"
+    },
+    {
+        "author": "Jeremy Barbay",
+        "title": "From Fine Grained Analysis to Instance Optimality",
+        "date": "2016-06-21"
+    },
+    {
+        "author": "Luka Fuerst",
+        "title": "Novosti v javi 8",
+        "date": "2016-06-17"
+    },
+    {
+        "author": "Žiga Sajovic",
+        "title": "Odvajanje programov",
+        "date": "2016-05-20"
+    },
+    {
+        "author": "Mojca Lorber",
+        "title": "Mere podobnosti nizov",
+        "date": "2016-04-01"
+    },
+    {
+        "author": "Peter Žužek",
+        "title": "Prevajanje SYCL kode z uporabo OpenCL generatorja kode",
+        "date": "2016-03-18"
+    },
+    {
+        "author": "Uroš Čibej",
+        "title": "Grafni izomorfizem in računska teorija group",
+        "date": "2016-03-04"
+    },
+    {
+        "author": "Jure Mihelič",
+        "title": "Predstavitev predmeta Inženiring algoritmov",
+        "date": "2016-02-26"
+    },
+    {
+        "author": "Matevž Jekovec",
+        "title": "Vzporedno iskanje po besedilu: Prepleteno priponsko drevo",
+        "date": "2016-01-22"
+    },
+    {
+        "author": "Tomaž Dobravec",
+        "title": "ALGator – sistem za avtomatsko izvajanje in analizo algoritmov ",
+        "date": "2016-02-05"
+    },
+    {
+        "author": "Marko Poženel",
+        "title": "35 let PacMan-a",
+        "date": "2016-02-19"
+    },
+    {
+        "author": "Uroš Čibej",
+        "title": "Simplex na Maxeler arhitekturi",
+        "date": "2015-11-24"
+    },
+    {
+        "author": "Luka Fuerst",
+        "title": "Iskanje najgostejšega podgrafa",
+        "date": "2015-12-17"
+    },
+    {
+        "author": "Sven Cerk Miha Eleršič",
+        "title": "Prevajalnik iz Haskella v Maxeler dataflow arhitekturo",
+        "date": "2015-10-30"
+    },
+    {
+        "author": "Selena Praprotnik",
+        "title": "Časovna omrežja",
+        "date": "2015-05-14"
+    },
+    {
+        "author": "Luka Fuerst",
+        "title": " Odkrivanje skupnosti v grafih",
+        "date": "2015-01-23"
+    },
+    {
+        "author": "Ivan Luković",
+        "title": "Research Activities in Model Driven Engineering and Business Intelligence of the Information System Group from the Faculty of Technical Sciences of University of Novi Sad",
+        "date": "2015-02-13"
+    },
+    {
+        "author": "Matevž Jekovec",
+        "title": "Iskanje k-tega prednika v drevesu v konstantnem času in linearnem prostoru",
+        "date": "2015-01-09"
+    },
+    {
+        "author": "Matevž Jekovec",
+        "title": "Priponska (B-)drevesa ali priponska polja?",
+        "date": "2014-12-05"
+    },
+    {
+        "author": "Uroš Čibej",
+        "title": "Dokazovanje neustavljivosti v vulgarnih programih",
+        "date": "2014-11-21"
+    },
+    {
+        "author": "Domen Mladovan",
+        "title": "Paralelizacija Gram-Schmidtovega postopka na sistemu Intel Xeon Phi",
+        "date": "2014-10-17"
+    },
+    {
+        "author": "Andraž Bajt",
+        "title": "Obvladovanje učinkov s pretvorniki monad",
+        "date": "2014-10-24"
+    },
+    {
+        "author": "Blaž Repas",
+        "title": "Preverjanje pravilnosti pogramov z odvisnimi tipi v programskem jeziku Idris",
+        "date": "2014-10-10"
+    },
+    {
+        "author": "Tadej Borovšak",
+        "title": "Intervalske Bézierove krivulje in ploskve",
+        "date": "2014-10-03"
+    },
+    {
+        "author": "Matija Rezar",
+        "title": "Vzporedni poboti",
+        "date": "2014-09-19"
+    },
+    {
+        "author": "Luka Sedmak",
+        "title": "Kriptografske valute",
+        "date": "2014-09-12"
+    },
+    {
+        "author": "Bogdan  Zavalnij",
+        "title": "Different Coloring Methods — theoretical and experimental approach",
+        "date": "2014-05-30"
+    },
+    {
+        "author": "Luka Fuerst",
+        "title": "Preiskovalna ekvivalenca v grafih",
+        "date": "2014-05-23"
+    },
+    {
+        "author": "Annamária Szenkovits",
+        "title": "Model based testing slides",
+        "date": "2014-05-09"
+    },
+    {
+        "author": "Sven Cerk",
+        "title": "Subsea: algoritem za iskanje podgrafnih izomorpfizmov",
+        "date": "2014-04-18"
+    },
+    {
+        "author": "Klemen Kloboves",
+        "title": "Upravljanje s pomnilnikom v C++ (2. del)",
+        "date": "2014-04-04"
+    },
+    {
+        "author": "Klemen Kloboves",
+        "title": "Upravljanje s pomnilnikom v C++ (1. del)",
+        "date": "2014-03-28"
+    },
+    {
+        "author": "Alejandro Lopez-Ortiz",
+        "title": "List update for data compression",
+        "date": "2014-03-21"
+    },
+    {
+        "author": "Marjan Mernik",
+        "title": "Predstavitev laboratorija LPM",
+        "date": "2014-03-07"
+    },
+    {
+        "author": "Ivan Halupka",
+        "title": "Automated grammar refactoring",
+        "date": "2014-02-28"
+    },
+    {
+        "author": "Boštjan Vilfan",
+        "title": "Prevajalnik iz Oberona 2 v C++ - nadaljevanje in zaključek",
+        "date": "2014-02-14"
+    },
+    {
+        "author": "Tadej Borovšak",
+        "title": "Paralelna aproksimacija rešitve problema n teles",
+        "date": "2014-02-07"
+    },
+    {
+        "author": "Boštjan Slivnik",
+        "title": "@Java - nov model anotacij",
+        "date": "2014-01-24"
+    },
+    {
+        "author": "Matija Cankar",
+        "title": "Improving infrastructure utilisation with finding efficient co-location through vertical scaling",
+        "date": "2014-01-09"
+    },
+    {
+        "author": "Uroš Čibej",
+        "title": "Verjetnost ustavitve programov",
+        "date": "2013-12-19"
+    },
+    {
+        "author": "Jure Mihelič",
+        "title": "Vozliščno pokritje",
+        "date": "2013-12-05"
+    },
+    {
+        "author": "Marko Poženel",
+        "title": "Clickstream in njegova uporaba",
+        "date": "2013-11-21"
+    },
+    {
+        "author": "Matevž Jekovec",
+        "title": "Gradnja priponskega drevesa v teoriji in praksi",
+        "date": "2013-11-07"
+    },
+    {
+        "author": "Nodari Sitchinava",
+        "title": "Parallel sorting algorithms",
+        "date": "2013-10-18"
+    },
+    {
+        "author": "Luka Fuerst ",
+        "title": "Funkcije, neskončna zaporedja in java",
+        "date": "2013-10-04"
+    },
+    {
+        "author": "Matic Potočnik",
+        "title": "Scala Linter",
+        "date": "2013-06-28"
+    },
+    {
+        "author": "Andrej Bukošek",
+        "title": "Sistem za vzporedno izvajanje podatkovno-pretočnih grafov",
+        "date": "2013-06-21"
+    },
+    {
+        "author": "Tomaž Dobravec",
+        "title": "Javansko zakulisje",
+        "date": "2013-05-24"
+    },
+    {
+        "author": "Boštjan Slivnik",
+        "title": "MONADS in [Haskell,Scala)",
+        "date": "2013-05-10"
+    },
+    {
+        "author": "Matevž Jekovec",
+        "title": "Ukkonenov algoritem za hitro gradnjo priponskih dreves",
+        "date": "2013-04-26"
+    },
+    {
+        "author": "Damjan   Šonc ",
+        "title": "  Korensko urejanje ali kako pri urejanju prehiteti Quicksort ",
+        "date": " 2013-04-12 "
+    },
+    {
+        "author": "Jure Mihelič ",
+        "title": "  Quicksorts ",
+        "date": " 2013-03-29 "
+    },
+    {
+        "author": "Andrej Bukošek ",
+        "title": " Algoritem sledenja poti žarkov za fotorealistično izrisovanje 3D scen ",
+        "date": " 2013-03-15 "
+    },
+    {
+        "author": "Andrej Brodnik ",
+        "title": " Izboljšave Dijkstrovega algoritma ",
+        "date": " 2013-02-15"
+    },
+    {
+        "author": "Luka Fuerst ",
+        "title": " Matroidi in požrešni algoritmi ",
+        "date": " 2013-01-02 "
+    },
+    {
+        "author": "Uroš Čibej",
+        "title": "Dokazi in računska zahtevnost",
+        "date": "2013-01-18"
+    },
+    {
+        "author": "Matevž Jekovec ",
+        "title": "Pregled vzporednih modelov računanja",
+        "date": "2013-01-14"
+    },
+    {
+        "author": "Matevž Jekovec ",
+        "title": "Pregled zaporednih modelov računanja",
+        "date": "2013-01-21 "
+    },
+    {
+        "author": "Jure Mihelič ",
+        "title": "Kvantno računalništvo IV",
+        "date": "2012-12-14"
+    },
+    {
+        "author": "Jure Mihelič",
+        "title": "Kvantno računalništvo III",
+        "date": "2012-11-23"
+    },
+    {
+        "author": "Jure Mihelič ",
+        "title": "Kvantno računalništvo II",
+        "date": "2012-11-09"
+    },
+    {
+        "author": "Jure Mihelič",
+        "title": "Kvantno računalništvo I",
+        "date": "2012-10-26"
+    },
+    {
+        "author": "Boštjan Slivnik",
+        "title": "Kanonični LL(k) sintaksni analizator, ponovno",
+        "date": "2012-10-19"
+    },
+    {
+        "author": "Luka Fuerst",
+        "title": "Hipergrafne gramatike",
+        "date": "2012-06-28 "
+    },
+    {
+        "author": "Boštjan Slivnik",
+        "title": "Darcs in algebra sprememb II. del",
+        "date": "2012-05-24"
+    },
+    {
+        "author": "Boštjan Slivnik",
+        "title": "Darcs in algebra sprememb I del. ",
+        "date": "2012-05-10"
+    },
+    {
+        "author": "Mitja Bezenšek",
+        "title": "Oddajanje več uporabnikom (mulicast) ",
+        "date": "2012-04-26"
+    },
+    {
+        "author": "Luka Fuerst",
+        "title": "Iskanje pogostih podgrafov ",
+        "date": "2012-04-12 "
+    },
+    {
+        "author": "Uroš Čibej",
+        "title": "Odvajanje regularnih jezikov ",
+        "date": "2012-03-29 "
+    },
+    {
+        "author": "Jure Mihelič",
+        "title": "Konkatenacijsko programiranje ",
+        "date": " 2012-03-15 "
+    },
+    {
+        "author": "Borut Robič",
+        "title": "O prerokih ",
+        "date": "2012-02-15"
+    },
+    {
+        "author": "Matevž Jekovec ",
+        "title": "Lokalno občutljivo zgoščevanje ",
+        "date": "2012-02-01"
+    },
+    {
+        "author": "Tomaž Dobravec",
+        "title": "Algoritmi nad grafi v jeziku linearne algebre ",
+        "date": "2012-01-18"
+    },
+    {
+        "author": "Luka Fuerst",
+        "title": "Sintaksna analiza in indukcija grafnih gramatik ",
+        "date": "2011-12-21 "
+    },
+    {
+        "author": "Matevž Jekovec",
+        "title": "Prioritetne vrste ",
+        "date": "2011-12-14"
+    },
+    {
+        "author": "Mitja Bezenšek",
+        "title": "IPv6 in njegove težave ",
+        "date": "2011-12-07 "
+    },
+    {
+        "author": "Uroš Čibej",
+        "title": "Turing ali pesimizem ",
+        "date": "2011-11-23 "
+    },
+    {
+        "author": "Jure Mihelič",
+        "title": "Prattov algoritem za sintaksno analizo ",
+        "date": "2011-11-09"
+    },
+    {
+        "author": "Boštjan Slivnik",
+        "title": "N(ajn)ovejši rezultati na področju sintaksne analize ",
+        "date": "2011-10-13 "
+    },
+    {
+        "author": "Boštjan Vilfan",
+        "title": "Prevajalnik iz Oberon 2 v C++ - drugi del ",
+        "date": "2011-09-29 "
+    },
+    {
+        "author": "Boštjan Slivnik",
+        "title": "Objektno usmerjeno programiranje v Haskellu ",
+        "date": "2011-05-05  "
+    },
+    {
+        "author": "Jure Mihelič",
+        "title": "Prototype-based object-oriented programming  ",
+        "date": "2011-04-21"
+    },
+    {
+        "author": "Mitja Bezenšek",
+        "title": "Oddajanje več prejemnikom na nivoju aplikacij z uporabo Steinerjevih dreves ",
+        "date": "2011-04-07 "
+    },
+    {
+        "author": "Tomaž Dobravec",
+        "title": "Spletna storitev za primerjavo med algoritmi ",
+        "date": "2011-03-24 "
+    },
+    {
+        "author": "Borut Robič",
+        "title": "Grand Design II ",
+        "date": "2011-02-04"
+    },
+    {
+        "author": "Mitja Bezenšek",
+        "title": "OMNet++ ",
+        "date": "2011-01-28"
+    },
+    {
+        "author": "Boštjan Slivnik",
+        "title": "Yacc je mrtev? ",
+        "date": "2011-01-21"
+    },
+    {
+        "author": "Uroš Čibej",
+        "title": "Type system extravaganza ",
+        "date": "2011-01-14"
+    },
+    {
+        "author": "Boštjan Vilfan",
+        "title": "Prevajalnik iz Oberona v C++ ",
+        "date": "2011-01-07"
+    },
+    {
+        "author": "Borut Robič",
+        "title": "Grand design I ",
+        "date": "2010-12-17"
+    },
+    {
+        "author": "Tomaž Dobravec",
+        "title": "CUDA ",
+        "date": "2010-12-03 "
+    },
+    {
+        "author": "Jure Mihelič",
+        "title": "ROX ",
+        "date": "2010-11-26 "
+    }
+]

@@ -16775,6 +16775,213 @@ var _elm_lang$http$Http$StringPart = F2(
 	});
 var _elm_lang$http$Http$stringPart = _elm_lang$http$Http$StringPart;
 
+var _user$project$LALGinar$makeIcon = function (seminar) {
+	var s = _elm_lang$core$List$head(
+		A2(
+			_elm_lang$core$List$filter,
+			function (p) {
+				return _elm_lang$core$Native_Utils.eq(
+					_elm_lang$core$Tuple$first(p),
+					seminar.author);
+			},
+			{
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: 'Jure Mihelič', _1: 'mem-mihelic.png'},
+				_1: {
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'Uroš Čibej', _1: 'mem-cibej.png'},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'Borut Robič', _1: 'mem-robic.png'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'Boštjan Slivnik', _1: 'mem-slivnik.png'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'Tomaž Dobravec', _1: 'mem-dobravec.png'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'Boštjan Vilfan', _1: 'mem-vilfan.jpg'},
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				}
+			}));
+	var _p0 = s;
+	if (_p0.ctor === 'Nothing') {
+		return A2(
+			_debois$elm_mdl$Material_List$avatarIcon,
+			'account_circle',
+			{ctor: '[]'});
+	} else {
+		return A2(
+			_debois$elm_mdl$Material_List$avatarImage,
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'img/',
+				_elm_lang$core$Tuple$second(_p0._0)),
+			{ctor: '[]'});
+	}
+};
+var _user$project$LALGinar$viewSeminar = F2(
+	function (model, seminar) {
+		return A2(
+			_debois$elm_mdl$Material_List$content,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: _user$project$LALGinar$makeIcon(seminar),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(seminar.author),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$br,
+							{ctor: '[]'},
+							{ctor: '[]'}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_debois$elm_mdl$Material_List$body,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text(seminar.title),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			});
+	});
+var _user$project$LALGinar$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$h3,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Past seminars'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_debois$elm_mdl$Material_List$ul,
+					{ctor: '[]'},
+					A2(
+						_elm_lang$core$List$map,
+						function (x) {
+							return A2(
+								_debois$elm_mdl$Material_List$li,
+								{
+									ctor: '::',
+									_0: _debois$elm_mdl$Material_List$withBody,
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: A2(_user$project$LALGinar$viewSeminar, model, x),
+									_1: {ctor: '[]'}
+								});
+						},
+						model.seminars)),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _user$project$LALGinar$defaultModel = {
+	mdl: _debois$elm_mdl$Material$model,
+	raised: '',
+	seminars: {ctor: '[]'}
+};
+var _user$project$LALGinar$Seminar = F3(
+	function (a, b, c) {
+		return {author: a, title: b, date: c};
+	});
+var _user$project$LALGinar$seminarDecoder = A4(
+	_elm_lang$core$Json_Decode$map3,
+	_user$project$LALGinar$Seminar,
+	A2(_elm_lang$core$Json_Decode$field, 'author', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'title', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'date', _elm_lang$core$Json_Decode$string));
+var _user$project$LALGinar$Model = F3(
+	function (a, b, c) {
+		return {mdl: a, raised: b, seminars: c};
+	});
+var _user$project$LALGinar$UpdateSeminars = function (a) {
+	return {ctor: 'UpdateSeminars', _0: a};
+};
+var _user$project$LALGinar$init = A2(
+	_elm_lang$http$Http$send,
+	_user$project$LALGinar$UpdateSeminars,
+	A2(
+		_elm_lang$http$Http$get,
+		'data/lalginar.json',
+		_elm_lang$core$Json_Decode$list(_user$project$LALGinar$seminarDecoder)));
+var _user$project$LALGinar$Raise = function (a) {
+	return {ctor: 'Raise', _0: a};
+};
+var _user$project$LALGinar$Mdl = function (a) {
+	return {ctor: 'Mdl', _0: a};
+};
+var _user$project$LALGinar$update = F2(
+	function (msg, model) {
+		var _p1 = msg;
+		switch (_p1.ctor) {
+			case 'Mdl':
+				return A3(_debois$elm_mdl$Material$update, _user$project$LALGinar$Mdl, _p1._0, model);
+			case 'Raise':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{raised: _p1._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				if (_p1._0.ctor === 'Ok') {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{seminars: _p1._0._0}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				} else {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								seminars: {
+									ctor: '::',
+									_0: A3(
+										_user$project$LALGinar$Seminar,
+										_elm_lang$core$Basics$toString(_p1._0._0),
+										'1231',
+										'1213'),
+									_1: {
+										ctor: '::',
+										_0: A3(_user$project$LALGinar$Seminar, 'BLA', '1231', '1213'),
+										_1: {ctor: '[]'}
+									}
+								}
+							}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				}
+		}
+	});
+
 var _user$project$Utils$accentedHue = _debois$elm_mdl$Material_Color$Pink;
 var _user$project$Utils$primaryHue = _debois$elm_mdl$Material_Color$Green;
 var _user$project$Utils$header_bg = A2(_debois$elm_mdl$Material_Color$color, _user$project$Utils$primaryHue, _debois$elm_mdl$Material_Color$S300);
@@ -16957,7 +17164,7 @@ var _user$project$People$associate = F4(
 	});
 var _user$project$People$associates = {
 	ctor: '::',
-	_0: A4(_user$project$People$associate, 'Vojta Vojtech', 'visiting student', 'Prague, Czech', '2016'),
+	_0: A4(_user$project$People$associate, 'Vojtech Vorel', 'visiting student', 'Prague, Czech', '2016'),
 	_1: {
 		ctor: '::',
 		_0: A4(_user$project$People$associate, 'Jan Pérhač', 'visiting student', 'Košice, Slovakia', '2016'),
@@ -17438,6 +17645,12 @@ var _user$project$Teaching$init = A2(
 		'data/courses.json',
 		_elm_lang$core$Json_Decode$list(_user$project$Teaching$courseDecoder)));
 
+var _user$project$Research$update = F2(
+	function (msg, model) {
+		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+	});
+var _user$project$Research$defaultModel = 0;
+var _user$project$Research$LALGinarView = {ctor: 'LALGinarView'};
 var _user$project$Research$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -17493,17 +17706,37 @@ var _user$project$Research$view = function (model) {
 								}),
 							_1: {ctor: '[]'}
 						}),
-					_1: {ctor: '[]'}
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$div,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text('For our active discussion, please check the webpage of laboratory seminars, a.k.a. '),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$button,
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html_Events$onClick(_user$project$Research$LALGinarView),
+											_1: {ctor: '[]'}
+										},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('LALGinars'),
+											_1: {ctor: '[]'}
+										}),
+									_1: {ctor: '[]'}
+								}
+							}),
+						_1: {ctor: '[]'}
+					}
 				}
 			}
 		});
 };
-var _user$project$Research$update = F2(
-	function (msg, model) {
-		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-	});
-var _user$project$Research$defaultModel = 0;
-var _user$project$Research$NoOp = {ctor: 'NoOp'};
 
 var _user$project$Publications$viewSoftware = A2(
 	_elm_lang$html$Html$div,
@@ -18557,12 +18790,16 @@ var _user$project$Main$defaultModel = {
 	people: _user$project$People$defaultModel,
 	teaching: _user$project$Teaching$defaultModel,
 	research: _user$project$Research$defaultModel,
-	publications: _user$project$Publications$defaultModel
+	publications: _user$project$Publications$defaultModel,
+	seminars: _user$project$LALGinar$defaultModel
 };
-var _user$project$Main$Model = F6(
-	function (a, b, c, d, e, f) {
-		return {mdl: a, tab: b, people: c, teaching: d, research: e, publications: f};
+var _user$project$Main$Model = F7(
+	function (a, b, c, d, e, f, g) {
+		return {mdl: a, tab: b, people: c, teaching: d, research: e, publications: f, seminars: g};
 	});
+var _user$project$Main$LALGinarMsg = function (a) {
+	return {ctor: 'LALGinarMsg', _0: a};
+};
 var _user$project$Main$PublicationsMsg = function (a) {
 	return {ctor: 'PublicationsMsg', _0: a};
 };
@@ -18636,6 +18873,11 @@ var _user$project$Main$viewPage = function (model) {
 								_elm_lang$html$Html$map,
 								_user$project$Main$PublicationsMsg,
 								_user$project$Publications$view(model.publications));
+						case 5:
+							return A2(
+								_elm_lang$html$Html$map,
+								_user$project$Main$LALGinarMsg,
+								_user$project$LALGinar$view(model.seminars));
 						default:
 							return _user$project$Main$view404(model);
 					}
@@ -18696,18 +18938,14 @@ var _user$project$Main$update = F2(
 					_user$project$Main$TeachingMsg,
 					A2(_user$project$Teaching$update, _p4._0, model.teaching));
 			case 'ResearchMsg':
-				return A4(
-					_user$project$Main$lift,
-					model,
-					F2(
-						function (m, x) {
-							return _elm_lang$core$Native_Utils.update(
-								m,
-								{research: x});
-						}),
-					_user$project$Main$ResearchMsg,
-					A2(_user$project$Research$update, _p4._0, model.research));
-			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{tab: 5}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'PublicationsMsg':
 				return A4(
 					_user$project$Main$lift,
 					model,
@@ -18719,6 +18957,18 @@ var _user$project$Main$update = F2(
 						}),
 					_user$project$Main$PublicationsMsg,
 					A2(_user$project$Publications$update, _p4._0, model.publications));
+			default:
+				return A4(
+					_user$project$Main$lift,
+					model,
+					F2(
+						function (m, x) {
+							return _elm_lang$core$Native_Utils.update(
+								m,
+								{seminars: x});
+						}),
+					_user$project$Main$LALGinarMsg,
+					A2(_user$project$LALGinar$update, _p4._0, model.seminars));
 		}
 	});
 var _user$project$Main$view_ = function (model) {
@@ -18795,7 +19045,11 @@ var _user$project$Main$init = _elm_lang$core$Platform_Cmd$batch(
 			_1: {
 				ctor: '::',
 				_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$TeachingMsg, _user$project$Teaching$init),
-				_1: {ctor: '[]'}
+				_1: {
+					ctor: '::',
+					_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$LALGinarMsg, _user$project$LALGinar$init),
+					_1: {ctor: '[]'}
+				}
 			}
 		}
 	});

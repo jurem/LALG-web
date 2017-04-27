@@ -15,6 +15,7 @@ import Material.Footer as Footer
 import Material.Card as Card
 import Material.List as List
 import Material.Grid as Grid
+import Navigation
 
 
 -- Local modules
@@ -30,6 +31,29 @@ import LALGinar
 -- MODEL
 
 
+hashes : List String
+hashes =
+    [ "#home", "#people", "#teaching", "#research", "#publications", "#lalginar" ]
+
+
+tab2hash : Int -> String
+tab2hash t =
+    List.drop t hashes |> List.head |> Maybe.withDefault ""
+
+
+ish : String -> ( Int, String ) -> Bool
+ish s ( idx, hash ) =
+    s == hash
+
+
+hash2tab : String -> Int
+hash2tab hash =
+    List.filter (ish hash) (List.indexedMap (,) hashes)
+        |> List.head
+        |> Maybe.withDefault ( 0, "" )
+        |> Tuple.first
+
+
 type alias Model =
     { mdl : Material.Model
     , tab : Int
@@ -41,12 +65,10 @@ type alias Model =
     }
 
 
-defaultModel : Model
-defaultModel =
-    { mdl =
-        Layout.setTabsWidth 50 Material.model
-        --??? setTabsWidth
-    , tab = 0
+defaultModel : Navigation.Location -> Model
+defaultModel location =
+    { mdl = Layout.setTabsWidth 50 Material.model --??? setTabsWidth
+    , tab = hash2tab location.hash
     , people = People.defaultModel
     , teaching = Teaching.defaultModel
     , research = Research.defaultModel
@@ -61,6 +83,7 @@ defaultModel =
 
 type Msg
     = Mdl (Material.Msg Msg)
+    | UrlChange Navigation.Location
     | SelectTab Int
     | PeopleMsg People.Msg
     | TeachingMsg Teaching.Msg
@@ -73,14 +96,10 @@ type Msg
 | Lift a submodel and submsg to (Model, Cmd Msg)
 -}
 lift :
-    Model
-    -- original model
-    -> (Model -> submodel -> Model)
-       -- updates model's submodel
-    -> (submsg -> Msg)
-       -- converts sub message to Msg
-    -> ( submodel, Cmd submsg )
-       -- sub model and sub message
+    Model -- original model
+    -> (Model -> submodel -> Model) -- updates model's submodel
+    -> (submsg -> Msg) -- converts sub message to Msg
+    -> ( submodel, Cmd submsg ) -- sub model and sub message
     -> ( Model, Cmd Msg )
 
 
@@ -98,8 +117,11 @@ update msg model =
         Mdl submsg ->
             Material.update Mdl submsg model
 
+        UrlChange location ->
+            ( { model | tab = (hash2tab location.hash) }, Cmd.none )
+
         SelectTab t ->
-            ( { model | tab = t }, Cmd.none )
+            ( { model | tab = t }, tab2hash t |> Navigation.newUrl )
 
         PeopleMsg submsg ->
             lift model (\m x -> { m | people = x }) PeopleMsg (People.update submsg model.people)
@@ -107,8 +129,8 @@ update msg model =
         TeachingMsg submsg ->
             lift model (\m x -> { m | teaching = x }) TeachingMsg (Teaching.update submsg model.teaching)
 
-        ResearchMsg (Research.LALGinarView) ->
-            ( { model | tab = 5 }, Cmd.none )
+        ResearchMsg Research.LALGinarView ->
+            ( { model | tab = 5 }, tab2hash 5 |> Navigation.newUrl )
 
         --ResearchMsg submsg ->
         --    lift model (\m x -> { m | research = x }) ResearchMsg (Research.update submsg model.research)
@@ -249,8 +271,7 @@ viewPage model =
         , Color.background Utils.page_bg
         , Color.text Utils.page_fg
         ]
-        [ br [] []
-          -- seems to be a bug in elm-mdl: if first element is a header, the border is to big
+        [ br [] [] -- seems to be a bug in elm-mdl: if first element is a header, the border is to big
         , (case model.tab of
             0 ->
                 viewMain model
@@ -273,8 +294,7 @@ viewPage model =
             _ ->
                 view404 model
           )
-        , br [] []
-          -- additonal space
+        , br [] [] -- additonal space
         ]
 
 
@@ -307,20 +327,22 @@ view model =
 -- MAIN
 
 
-init : Cmd Msg
-init =
-    Cmd.batch
+init : Navigation.Location -> ( Model, Cmd Msg )
+init location =
+    ( defaultModel location
+    , Cmd.batch
         [ Material.init Mdl
         , Cmd.map PeopleMsg People.init
         , Cmd.map TeachingMsg Teaching.init
         , Cmd.map LALGinarMsg LALGinar.init
         ]
+    )
 
 
 main : Program Never Model Msg
 main =
-    Html.program
-        { init = ( defaultModel, init )
+    Navigation.program UrlChange
+        { init = init
         , update = update
         , subscriptions = \model -> Sub.batch [ Material.subscriptions Mdl model ]
         , view = view

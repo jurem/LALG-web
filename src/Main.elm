@@ -223,6 +223,15 @@ view404 _ =
         ]
 
 
+viewLalginar : Html Msg
+viewLalginar =
+    Card.view [ css "width" "100%", css "padding" "0px", Elevation.e2 ]
+        [ Card.title [ Options.scrim 0.3, Color.background Utils.tabs_bg ] [ text "LALGinar" ]
+        , Card.text [] [ text "Our informal laboratory seminar about various topics broadly related to computer science." ]
+        , Card.actions [ Card.border, Typography.center ] [ a [ href "#lalginar" ] [ text "Click here!" ] ]
+        ]
+
+
 viewResearch : String -> String -> String -> List (Grid.Cell msg)
 viewResearch icon title desc =
     [ Grid.cell [ Grid.size Grid.All 1 ] [ List.icon icon [ Icon.size48 ] ]
@@ -249,7 +258,9 @@ viewMain model =
             , a [ href "http://www.uni-lj.si" ] [ text "University of Ljubljana" ]
             , text "."
             , hr [] []
-            , text "We conduct research and development as well as teaching in the following areas:"
+            ]
+        , Card.text [ css "width" "100%", css "box-sizing" "border-box" ]
+            [ text "We conduct research and development as well as teaching in the following areas:"
             , Grid.grid []
                 (viewResearch "build" "Algorithm engineering and experimental algorithmics" "implementing and optimizing algorithms to perfom well in practice, experimental evaluation of algorithm efficiency"
                     ++ viewResearch "done_all" "Parallel and distributed computation and algorithms" "using parallelism to enhance algorithms, multithreading, message passing, general purpose graphic processing unit, dataflow computing, grid computing"
@@ -257,6 +268,7 @@ viewMain model =
                     ++ viewResearch "apps" "System software engineering and operating systems" "assemblers, linkers, virtual machines, emulators, operating systems, virtualization and containers, system programming"
                     ++ viewResearch "spa" "Theory of algorithms, computability and complexity theory" "approximation and randomised algorithms, exact exponential algorithms and fixed parameter tractability, combinatorial optimization, problems on graphs"
                 )
+            , Grid.grid [] [ Grid.cell [ Grid.size Grid.All 6 ] [], Grid.cell [ Grid.size Grid.All 6 ] [ viewLalginar ] ]
             ]
         ]
 

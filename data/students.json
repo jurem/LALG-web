@@ -1,0 +1,26 @@
+[
+  { "name" : "Luka Hauptman",
+    "role" : "teaching assistant, PhD student",
+    "year" : ""
+  },
+  { "name" : "Mitja Bezenšek",
+    "role" : "young researcher, PhD student",
+    "year" : ""
+  },
+  { "name" : "Nikolaj Janko",
+    "role" : "summer school, demonstrator, project member",
+    "year" : "2012-2015"
+  },
+  { "name" : "Tadej Borovšak",
+    "role" : "summer school, lalginar, demonstrator",
+    "year" : "2013-2014"
+  },
+  { "name" : "Sven Cerk",
+    "role" : "subgraph isomorphisms, summer school",
+    "year" : "2014"
+  },
+  { "name" : "Klemen Kloboves",
+    "role" : "SIC/XE toolchain, C++",
+    "year" : "2013"
+  }
+]

@@ -52,14 +52,13 @@ type alias Associate =
     }
 
 
-associates : List Associate
-associates =
-    [ Associate "Vojtech Vorel" "visiting student" "Prague, Czech" "2016"
-    , Associate "Jan Pérhač" "visiting student" "Košice, Slovakia" "2016"
-    , Associate "Ivan Halupka" "visiting student" "Košice, Slovakia" "2014"
-    , Associate "Christophe Rapine" "visiting researcher" "Grenoble, France" "2002"
-    , Associate "Amine Mahjoub" "visiting researcher" "Grenoble, France" "2002"
-    ]
+associateDecoder : Decode.Decoder Associate
+associateDecoder =
+    Decode.map4 Associate
+        (Decode.field "name" Decode.string)
+        (Decode.field "role" Decode.string)
+        (Decode.field "from" Decode.string)
+        (Decode.field "year" Decode.string)
 
 
 type alias Student =
@@ -69,21 +68,20 @@ type alias Student =
     }
 
 
-students : List Student
-students =
-    [ Student "Luka Hauptman" "teaching assistant, PhD student" ""
-    , Student "Mitja Bezenšek" "young researcher, PhD student" ""
-    , Student "Nikolaj Janko" "summer school, demonstrator, project member" "2012-2015"
-    , Student "Tadej Borovšak" "summer school, lalginar, demonstrator" "2013-2014"
-    , Student "Sven Cerk" "subgraph isomorphisms, summer school" "2014"
-    , Student "Klemen Kloboves" "SIC/XE toolchain, C++" "2013"
-    ]
+studentDecoder : Decode.Decoder Student
+studentDecoder =
+    Decode.map3 Student
+        (Decode.field "name" Decode.string)
+        (Decode.field "role" Decode.string)
+        (Decode.field "year" Decode.string)
 
 
 type alias Model =
     { mdl : Material.Model
     , raised : String
     , members : List Member
+    , associates : List Associate
+    , students : List Student
     }
 
 
@@ -92,13 +90,9 @@ defaultModel =
     { mdl = Material.model
     , raised = ""
     , members = []
+    , associates = []
+    , students = []
     }
-
-
-init : Cmd Msg
-init =
-    Http.send UpdateMembers
-        (Http.get "data/members.json" (Decode.list memberDecoder))
 
 
 
@@ -107,9 +101,22 @@ init =
 
 type Msg
     = Mdl (Material.Msg Msg)
-    | Raise String
-      -- the focused member name
-    | UpdateMembers (Result Http.Error (List Member))
+    | Raise String -- the focused member name
+    | FetchMembers (Result Http.Error (List Member))
+    | FetchAssociates (Result Http.Error (List Associate))
+    | FetchStudents (Result Http.Error (List Student))
+
+
+init : Cmd Msg
+init =
+    Cmd.batch
+        [ Http.send FetchMembers
+            (Http.get "data/members.json" (Decode.list memberDecoder))
+        , Http.send FetchAssociates
+            (Http.get "data/associates.json" (Decode.list associateDecoder))
+        , Http.send FetchStudents
+            (Http.get "data/students.json" (Decode.list studentDecoder))
+        ]
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -121,10 +128,22 @@ update msg model =
         Raise member ->
             ( { model | raised = member }, Cmd.none )
 
-        UpdateMembers (Ok m) ->
+        FetchMembers (Ok m) ->
             ( { model | members = m }, Cmd.none )
 
-        UpdateMembers (Err _) ->
+        FetchMembers (Err _) ->
+            ( model, Cmd.none )
+
+        FetchAssociates (Ok a) ->
+            ( { model | associates = a }, Cmd.none )
+
+        FetchAssociates (Err _) ->
+            ( model, Cmd.none )
+
+        FetchStudents (Ok s) ->
+            ( { model | students = s }, Cmd.none )
+
+        FetchStudents (Err _) ->
             ( model, Cmd.none )
 
 
@@ -200,7 +219,7 @@ view model =
         , Grid.grid []
             (List.map (\x -> Grid.cell [ Grid.size Grid.All 4 ] [ viewMember model x ]) model.members)
         , h3 [] [ text "Associates and guests" ]
-        , ul [] (List.map (\x -> viewAssociate x) associates)
+        , ul [] (List.map (\x -> viewAssociate x) model.associates)
         , h3 [] [ text "Students" ]
-        , ul [] (List.map (\x -> viewStudent x) students)
+        , ul [] (List.map (\x -> viewStudent x) model.students)
         ]

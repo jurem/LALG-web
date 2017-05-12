@@ -1,0 +1,27 @@
+[
+  { "name" : "Vojtech Vorel",
+    "role" : "visiting PhD student",
+    "from" : "Prague, Czech",
+    "year" : "2016"
+  },
+  { "name" : "Jan Pérhač",
+    "role" : "visiting PhD student",
+    "from" : "Košice, Slovakia",
+    "year" : "2016"
+  },
+  { "name" : "Ivan Halupka",
+    "role" : "visiting PhD student",
+    "from" : "Košice, Slovakia",
+    "year" : "2014"
+  },
+  { "name" : "Christophe Rapine",
+    "role" : "visiting researcher",
+    "from" : "Grenoble, France",
+    "year" : "2002"
+  },
+  { "name" : "Amine Mahjoub",
+    "role" : "visiting researcher",
+    "from" : "Grenoble, France",
+    "year" : "2002"
+  }
+]

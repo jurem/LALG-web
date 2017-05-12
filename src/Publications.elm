@@ -44,7 +44,7 @@ viewBook title imgsrc desc =
         [ h4 [] [ text title ]
         , Grid.grid []
             [ Grid.cell [ Grid.size Grid.All 4 ] [ img [ src imgsrc, height 256 ] [] ]
-            , Grid.cell [ Grid.size Grid.All 6 ] desc
+            , Grid.cell [ Grid.size Grid.All 8 ] desc
             ]
         ]
 

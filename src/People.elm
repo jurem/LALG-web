@@ -52,18 +52,13 @@ type alias Associate =
     }
 
 
-associate : String -> String -> String -> String -> Associate
-associate name role from year =
-    { name = name, role = role, from = from, year = year }
-
-
 associates : List Associate
 associates =
-    [ associate "Vojtech Vorel" "visiting student" "Prague, Czech" "2016"
-    , associate "Jan Pérhač" "visiting student" "Košice, Slovakia" "2016"
-    , associate "Ivan Halupka" "visiting student" "Košice, Slovakia" "2014"
-    , associate "Christophe Rapine" "visiting researcher" "Grenoble, France" "2002"
-    , associate "Amine Mahjoub" "visiting researcher" "Grenoble, France" "2002"
+    [ Associate "Vojtech Vorel" "visiting student" "Prague, Czech" "2016"
+    , Associate "Jan Pérhač" "visiting student" "Košice, Slovakia" "2016"
+    , Associate "Ivan Halupka" "visiting student" "Košice, Slovakia" "2014"
+    , Associate "Christophe Rapine" "visiting researcher" "Grenoble, France" "2002"
+    , Associate "Amine Mahjoub" "visiting researcher" "Grenoble, France" "2002"
     ]
 
 
@@ -74,19 +69,14 @@ type alias Student =
     }
 
 
-student : String -> String -> String -> Student
-student name role year =
-    { name = name, role = role, year = year }
-
-
 students : List Student
 students =
-    [ student "Luka Hauptman" "teaching assistant, PhD student" ""
-    , student "Mitja Bezenšek" "young researcher, PhD student" ""
-    , student "Nikolaj Janko" "summer school, demonstrator, project member" "2012-2015"
-    , student "Tadej Borovšak" "summer school, lalginar, demonstrator" "2013-2014"
-    , student "Sven Cerk" "subgraph isomorphisms, summer school" "2014"
-    , student "Klemen Kloboves" "SIC/XE toolchain, C++" "2013"
+    [ Student "Luka Hauptman" "teaching assistant, PhD student" ""
+    , Student "Mitja Bezenšek" "young researcher, PhD student" ""
+    , Student "Nikolaj Janko" "summer school, demonstrator, project member" "2012-2015"
+    , Student "Tadej Borovšak" "summer school, lalginar, demonstrator" "2013-2014"
+    , Student "Sven Cerk" "subgraph isomorphisms, summer school" "2014"
+    , Student "Klemen Kloboves" "SIC/XE toolchain, C++" "2013"
     ]
 
 

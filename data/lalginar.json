@@ -50,7 +50,7 @@
     },
     {
         "author": "Tomaž Dobravec",
-        "title": "ALGator – sistem za avtomatsko izvajanje in analizo algoritmov ",
+        "title": "ALGator – sistem za avtomatsko izvajanje in analizo algoritmov",
         "date": "2016-02-05"
     },
     {
@@ -224,7 +224,7 @@
         "date": "2013-10-18"
     },
     {
-        "author": "Luka Fuerst ",
+        "author": "Luka Fuerst",
         "title": "Funkcije, neskončna zaporedja in java",
         "date": "2013-10-04"
     },
@@ -254,28 +254,28 @@
         "date": "2013-04-26"
     },
     {
-        "author": "Damjan   Šonc ",
-        "title": "  Korensko urejanje ali kako pri urejanju prehiteti Quicksort ",
+        "author": "Damjan Šonc",
+        "title": "  Korensko urejanje ali kako pri urejanju prehiteti Quicksort",
         "date": " 2013-04-12 "
     },
     {
-        "author": "Jure Mihelič ",
-        "title": "  Quicksorts ",
+        "author": "Jure Mihelič",
+        "title": "  Quicksorts",
         "date": " 2013-03-29 "
     },
     {
-        "author": "Andrej Bukošek ",
-        "title": " Algoritem sledenja poti žarkov za fotorealistično izrisovanje 3D scen ",
+        "author": "Andrej Bukošek",
+        "title": " Algoritem sledenja poti žarkov za fotorealistično izrisovanje 3D scen",
         "date": " 2013-03-15 "
     },
     {
-        "author": "Andrej Brodnik ",
-        "title": " Izboljšave Dijkstrovega algoritma ",
+        "author": "Andrej Brodnik",
+        "title": " Izboljšave Dijkstrovega algoritma",
         "date": " 2013-02-15"
     },
     {
-        "author": "Luka Fuerst ",
-        "title": " Matroidi in požrešni algoritmi ",
+        "author": "Luka Fuerst",
+        "title": " Matroidi in požrešni algoritmi",
         "date": " 2013-01-02 "
     },
     {
@@ -284,17 +284,17 @@
         "date": "2013-01-18"
     },
     {
-        "author": "Matevž Jekovec ",
+        "author": "Matevž Jekovec",
         "title": "Pregled vzporednih modelov računanja",
         "date": "2013-01-14"
     },
     {
-        "author": "Matevž Jekovec ",
+        "author": "Matevž Jekovec",
         "title": "Pregled zaporednih modelov računanja",
         "date": "2013-01-21 "
     },
     {
-        "author": "Jure Mihelič ",
+        "author": "Jure Mihelič",
         "title": "Kvantno računalništvo IV",
         "date": "2012-12-14"
     },
@@ -304,7 +304,7 @@
         "date": "2012-11-23"
     },
     {
-        "author": "Jure Mihelič ",
+        "author": "Jure Mihelič",
         "title": "Kvantno računalništvo II",
         "date": "2012-11-09"
     },
@@ -330,137 +330,137 @@
     },
     {
         "author": "Boštjan Slivnik",
-        "title": "Darcs in algebra sprememb I del. ",
+        "title": "Darcs in algebra sprememb I del.",
         "date": "2012-05-10"
     },
     {
         "author": "Mitja Bezenšek",
-        "title": "Oddajanje več uporabnikom (mulicast) ",
+        "title": "Oddajanje več uporabnikom (mulicast)",
         "date": "2012-04-26"
     },
     {
         "author": "Luka Fuerst",
-        "title": "Iskanje pogostih podgrafov ",
+        "title": "Iskanje pogostih podgrafov",
         "date": "2012-04-12 "
     },
     {
         "author": "Uroš Čibej",
-        "title": "Odvajanje regularnih jezikov ",
+        "title": "Odvajanje regularnih jezikov",
         "date": "2012-03-29 "
     },
     {
         "author": "Jure Mihelič",
-        "title": "Konkatenacijsko programiranje ",
+        "title": "Konkatenacijsko programiranje",
         "date": " 2012-03-15 "
     },
     {
         "author": "Borut Robič",
-        "title": "O prerokih ",
+        "title": "O prerokih",
         "date": "2012-02-15"
     },
     {
-        "author": "Matevž Jekovec ",
-        "title": "Lokalno občutljivo zgoščevanje ",
+        "author": "Matevž Jekovec",
+        "title": "Lokalno občutljivo zgoščevanje",
         "date": "2012-02-01"
     },
     {
         "author": "Tomaž Dobravec",
-        "title": "Algoritmi nad grafi v jeziku linearne algebre ",
+        "title": "Algoritmi nad grafi v jeziku linearne algebre",
         "date": "2012-01-18"
     },
     {
         "author": "Luka Fuerst",
-        "title": "Sintaksna analiza in indukcija grafnih gramatik ",
+        "title": "Sintaksna analiza in indukcija grafnih gramatik",
         "date": "2011-12-21 "
     },
     {
         "author": "Matevž Jekovec",
-        "title": "Prioritetne vrste ",
+        "title": "Prioritetne vrste",
         "date": "2011-12-14"
     },
     {
         "author": "Mitja Bezenšek",
-        "title": "IPv6 in njegove težave ",
+        "title": "IPv6 in njegove težave",
         "date": "2011-12-07 "
     },
     {
         "author": "Uroš Čibej",
-        "title": "Turing ali pesimizem ",
+        "title": "Turing ali pesimizem",
         "date": "2011-11-23 "
     },
     {
         "author": "Jure Mihelič",
-        "title": "Prattov algoritem za sintaksno analizo ",
+        "title": "Prattov algoritem za sintaksno analizo",
         "date": "2011-11-09"
     },
     {
         "author": "Boštjan Slivnik",
-        "title": "N(ajn)ovejši rezultati na področju sintaksne analize ",
+        "title": "N(ajn)ovejši rezultati na področju sintaksne analize",
         "date": "2011-10-13 "
     },
     {
         "author": "Boštjan Vilfan",
-        "title": "Prevajalnik iz Oberon 2 v C++ - drugi del ",
+        "title": "Prevajalnik iz Oberon 2 v C++ - drugi del",
         "date": "2011-09-29 "
     },
     {
         "author": "Boštjan Slivnik",
-        "title": "Objektno usmerjeno programiranje v Haskellu ",
+        "title": "Objektno usmerjeno programiranje v Haskellu",
         "date": "2011-05-05  "
     },
     {
         "author": "Jure Mihelič",
-        "title": "Prototype-based object-oriented programming  ",
+        "title": "Prototype-based object-oriented programming",
         "date": "2011-04-21"
     },
     {
         "author": "Mitja Bezenšek",
-        "title": "Oddajanje več prejemnikom na nivoju aplikacij z uporabo Steinerjevih dreves ",
+        "title": "Oddajanje več prejemnikom na nivoju aplikacij z uporabo Steinerjevih dreves",
         "date": "2011-04-07 "
     },
     {
         "author": "Tomaž Dobravec",
-        "title": "Spletna storitev za primerjavo med algoritmi ",
+        "title": "Spletna storitev za primerjavo med algoritmi",
         "date": "2011-03-24 "
     },
     {
         "author": "Borut Robič",
-        "title": "Grand Design II ",
+        "title": "Grand Design II",
         "date": "2011-02-04"
     },
     {
         "author": "Mitja Bezenšek",
-        "title": "OMNet++ ",
+        "title": "OMNet++",
         "date": "2011-01-28"
     },
     {
         "author": "Boštjan Slivnik",
-        "title": "Yacc je mrtev? ",
+        "title": "Yacc je mrtev?",
         "date": "2011-01-21"
     },
     {
         "author": "Uroš Čibej",
-        "title": "Type system extravaganza ",
+        "title": "Type system extravaganza",
         "date": "2011-01-14"
     },
     {
         "author": "Boštjan Vilfan",
-        "title": "Prevajalnik iz Oberona v C++ ",
+        "title": "Prevajalnik iz Oberona v C++",
         "date": "2011-01-07"
     },
     {
         "author": "Borut Robič",
-        "title": "Grand design I ",
+        "title": "Grand design I",
         "date": "2010-12-17"
     },
     {
         "author": "Tomaž Dobravec",
-        "title": "CUDA ",
+        "title": "CUDA",
         "date": "2010-12-03 "
     },
     {
         "author": "Jure Mihelič",
-        "title": "ROX ",
+        "title": "ROX",
         "date": "2010-11-26 "
     }
 ]

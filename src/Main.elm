@@ -100,13 +100,7 @@ lift :
     -> (Model -> submodel -> Model) -- updates model's submodel
     -> (submsg -> Msg) -- converts sub message to Msg
     -> ( submodel, Cmd submsg ) -- sub model and sub message
-    -> ( Model, Cmd Msg )
-
-
-
--- model and message
-
-
+    -> ( Model, Cmd Msg ) -- model and message
 lift mdl liftsubmdl liftsubmsg ( submdl, subcmd ) =
     ( liftsubmdl mdl submdl, Cmd.map liftsubmsg subcmd )
 
@@ -154,7 +148,7 @@ viewHeader model =
         ]
         [ img [ src "img/logo-lalg.png", width 100 ] []
         , spacepx 10
-        , Layout.title [] [ text "Laboratory for Algorithms and Data Structures" ]
+        , Layout.title [] [ text "Laboratory of Algorithmics" ]
         , Layout.spacer
         , img [ src "img/logo-fri.png", width 200 ] []
         ]
@@ -198,7 +192,7 @@ viewFooter =
             Footer.middle []
                 [ Footer.html <|
                     Options.div [ Options.center, Typography.center ]
-                        [ text "Laboratory for Algorithms and Data Structures"
+                        [ text "Laboratory of Algorithmics"
                         , br [] []
                         , text "Faculty of Computer and Information Science"
                         , br [] []
@@ -251,7 +245,7 @@ viewMain model =
         , Card.title [ Options.scrim 0.3, Color.background Utils.tabs_bg ]
             [ text "About us" ]
         , Card.text [ css "width" "100%", css "box-sizing" "border-box" ]
-            [ a [ href "http://lalg.fri.uni-lj.si" ] [ text "Laboratory of Algorithms and Data Structures" ]
+            [ a [ href "http://lalg.fri.uni-lj.si" ] [ text "Laboratory of Algorithmics" ]
             , text " is a research laboratory at the "
             , a [ href "http://www.fri.uni-lj.si" ] [ text "Faculty of Computer and Information Science" ]
             , text ", "

@@ -16775,6 +16775,408 @@ var _elm_lang$http$Http$StringPart = F2(
 	});
 var _elm_lang$http$Http$stringPart = _elm_lang$http$Http$StringPart;
 
+var _elm_lang$navigation$Native_Navigation = function() {
+
+
+// FAKE NAVIGATION
+
+function go(n)
+{
+	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
+	{
+		if (n !== 0)
+		{
+			history.go(n);
+		}
+		callback(_elm_lang$core$Native_Scheduler.succeed(_elm_lang$core$Native_Utils.Tuple0));
+	});
+}
+
+function pushState(url)
+{
+	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
+	{
+		history.pushState({}, '', url);
+		callback(_elm_lang$core$Native_Scheduler.succeed(getLocation()));
+	});
+}
+
+function replaceState(url)
+{
+	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
+	{
+		history.replaceState({}, '', url);
+		callback(_elm_lang$core$Native_Scheduler.succeed(getLocation()));
+	});
+}
+
+
+// REAL NAVIGATION
+
+function reloadPage(skipCache)
+{
+	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
+	{
+		document.location.reload(skipCache);
+		callback(_elm_lang$core$Native_Scheduler.succeed(_elm_lang$core$Native_Utils.Tuple0));
+	});
+}
+
+function setLocation(url)
+{
+	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
+	{
+		try
+		{
+			window.location = url;
+		}
+		catch(err)
+		{
+			// Only Firefox can throw a NS_ERROR_MALFORMED_URI exception here.
+			// Other browsers reload the page, so let's be consistent about that.
+			document.location.reload(false);
+		}
+		callback(_elm_lang$core$Native_Scheduler.succeed(_elm_lang$core$Native_Utils.Tuple0));
+	});
+}
+
+
+// GET LOCATION
+
+function getLocation()
+{
+	var location = document.location;
+
+	return {
+		href: location.href,
+		host: location.host,
+		hostname: location.hostname,
+		protocol: location.protocol,
+		origin: location.origin,
+		port_: location.port,
+		pathname: location.pathname,
+		search: location.search,
+		hash: location.hash,
+		username: location.username,
+		password: location.password
+	};
+}
+
+
+// DETECT IE11 PROBLEMS
+
+function isInternetExplorer11()
+{
+	return window.navigator.userAgent.indexOf('Trident') !== -1;
+}
+
+
+return {
+	go: go,
+	setLocation: setLocation,
+	reloadPage: reloadPage,
+	pushState: pushState,
+	replaceState: replaceState,
+	getLocation: getLocation,
+	isInternetExplorer11: isInternetExplorer11
+};
+
+}();
+
+var _elm_lang$navigation$Navigation$replaceState = _elm_lang$navigation$Native_Navigation.replaceState;
+var _elm_lang$navigation$Navigation$pushState = _elm_lang$navigation$Native_Navigation.pushState;
+var _elm_lang$navigation$Navigation$go = _elm_lang$navigation$Native_Navigation.go;
+var _elm_lang$navigation$Navigation$reloadPage = _elm_lang$navigation$Native_Navigation.reloadPage;
+var _elm_lang$navigation$Navigation$setLocation = _elm_lang$navigation$Native_Navigation.setLocation;
+var _elm_lang$navigation$Navigation_ops = _elm_lang$navigation$Navigation_ops || {};
+_elm_lang$navigation$Navigation_ops['&>'] = F2(
+	function (task1, task2) {
+		return A2(
+			_elm_lang$core$Task$andThen,
+			function (_p0) {
+				return task2;
+			},
+			task1);
+	});
+var _elm_lang$navigation$Navigation$notify = F3(
+	function (router, subs, location) {
+		var send = function (_p1) {
+			var _p2 = _p1;
+			return A2(
+				_elm_lang$core$Platform$sendToApp,
+				router,
+				_p2._0(location));
+		};
+		return A2(
+			_elm_lang$navigation$Navigation_ops['&>'],
+			_elm_lang$core$Task$sequence(
+				A2(_elm_lang$core$List$map, send, subs)),
+			_elm_lang$core$Task$succeed(
+				{ctor: '_Tuple0'}));
+	});
+var _elm_lang$navigation$Navigation$cmdHelp = F3(
+	function (router, subs, cmd) {
+		var _p3 = cmd;
+		switch (_p3.ctor) {
+			case 'Jump':
+				return _elm_lang$navigation$Navigation$go(_p3._0);
+			case 'New':
+				return A2(
+					_elm_lang$core$Task$andThen,
+					A2(_elm_lang$navigation$Navigation$notify, router, subs),
+					_elm_lang$navigation$Navigation$pushState(_p3._0));
+			case 'Modify':
+				return A2(
+					_elm_lang$core$Task$andThen,
+					A2(_elm_lang$navigation$Navigation$notify, router, subs),
+					_elm_lang$navigation$Navigation$replaceState(_p3._0));
+			case 'Visit':
+				return _elm_lang$navigation$Navigation$setLocation(_p3._0);
+			default:
+				return _elm_lang$navigation$Navigation$reloadPage(_p3._0);
+		}
+	});
+var _elm_lang$navigation$Navigation$killPopWatcher = function (popWatcher) {
+	var _p4 = popWatcher;
+	if (_p4.ctor === 'Normal') {
+		return _elm_lang$core$Process$kill(_p4._0);
+	} else {
+		return A2(
+			_elm_lang$navigation$Navigation_ops['&>'],
+			_elm_lang$core$Process$kill(_p4._0),
+			_elm_lang$core$Process$kill(_p4._1));
+	}
+};
+var _elm_lang$navigation$Navigation$onSelfMsg = F3(
+	function (router, location, state) {
+		return A2(
+			_elm_lang$navigation$Navigation_ops['&>'],
+			A3(_elm_lang$navigation$Navigation$notify, router, state.subs, location),
+			_elm_lang$core$Task$succeed(state));
+	});
+var _elm_lang$navigation$Navigation$subscription = _elm_lang$core$Native_Platform.leaf('Navigation');
+var _elm_lang$navigation$Navigation$command = _elm_lang$core$Native_Platform.leaf('Navigation');
+var _elm_lang$navigation$Navigation$Location = function (a) {
+	return function (b) {
+		return function (c) {
+			return function (d) {
+				return function (e) {
+					return function (f) {
+						return function (g) {
+							return function (h) {
+								return function (i) {
+									return function (j) {
+										return function (k) {
+											return {href: a, host: b, hostname: c, protocol: d, origin: e, port_: f, pathname: g, search: h, hash: i, username: j, password: k};
+										};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
+};
+var _elm_lang$navigation$Navigation$State = F2(
+	function (a, b) {
+		return {subs: a, popWatcher: b};
+	});
+var _elm_lang$navigation$Navigation$init = _elm_lang$core$Task$succeed(
+	A2(
+		_elm_lang$navigation$Navigation$State,
+		{ctor: '[]'},
+		_elm_lang$core$Maybe$Nothing));
+var _elm_lang$navigation$Navigation$Reload = function (a) {
+	return {ctor: 'Reload', _0: a};
+};
+var _elm_lang$navigation$Navigation$reload = _elm_lang$navigation$Navigation$command(
+	_elm_lang$navigation$Navigation$Reload(false));
+var _elm_lang$navigation$Navigation$reloadAndSkipCache = _elm_lang$navigation$Navigation$command(
+	_elm_lang$navigation$Navigation$Reload(true));
+var _elm_lang$navigation$Navigation$Visit = function (a) {
+	return {ctor: 'Visit', _0: a};
+};
+var _elm_lang$navigation$Navigation$load = function (url) {
+	return _elm_lang$navigation$Navigation$command(
+		_elm_lang$navigation$Navigation$Visit(url));
+};
+var _elm_lang$navigation$Navigation$Modify = function (a) {
+	return {ctor: 'Modify', _0: a};
+};
+var _elm_lang$navigation$Navigation$modifyUrl = function (url) {
+	return _elm_lang$navigation$Navigation$command(
+		_elm_lang$navigation$Navigation$Modify(url));
+};
+var _elm_lang$navigation$Navigation$New = function (a) {
+	return {ctor: 'New', _0: a};
+};
+var _elm_lang$navigation$Navigation$newUrl = function (url) {
+	return _elm_lang$navigation$Navigation$command(
+		_elm_lang$navigation$Navigation$New(url));
+};
+var _elm_lang$navigation$Navigation$Jump = function (a) {
+	return {ctor: 'Jump', _0: a};
+};
+var _elm_lang$navigation$Navigation$back = function (n) {
+	return _elm_lang$navigation$Navigation$command(
+		_elm_lang$navigation$Navigation$Jump(0 - n));
+};
+var _elm_lang$navigation$Navigation$forward = function (n) {
+	return _elm_lang$navigation$Navigation$command(
+		_elm_lang$navigation$Navigation$Jump(n));
+};
+var _elm_lang$navigation$Navigation$cmdMap = F2(
+	function (_p5, myCmd) {
+		var _p6 = myCmd;
+		switch (_p6.ctor) {
+			case 'Jump':
+				return _elm_lang$navigation$Navigation$Jump(_p6._0);
+			case 'New':
+				return _elm_lang$navigation$Navigation$New(_p6._0);
+			case 'Modify':
+				return _elm_lang$navigation$Navigation$Modify(_p6._0);
+			case 'Visit':
+				return _elm_lang$navigation$Navigation$Visit(_p6._0);
+			default:
+				return _elm_lang$navigation$Navigation$Reload(_p6._0);
+		}
+	});
+var _elm_lang$navigation$Navigation$Monitor = function (a) {
+	return {ctor: 'Monitor', _0: a};
+};
+var _elm_lang$navigation$Navigation$program = F2(
+	function (locationToMessage, stuff) {
+		var init = stuff.init(
+			_elm_lang$navigation$Native_Navigation.getLocation(
+				{ctor: '_Tuple0'}));
+		var subs = function (model) {
+			return _elm_lang$core$Platform_Sub$batch(
+				{
+					ctor: '::',
+					_0: _elm_lang$navigation$Navigation$subscription(
+						_elm_lang$navigation$Navigation$Monitor(locationToMessage)),
+					_1: {
+						ctor: '::',
+						_0: stuff.subscriptions(model),
+						_1: {ctor: '[]'}
+					}
+				});
+		};
+		return _elm_lang$html$Html$program(
+			{init: init, view: stuff.view, update: stuff.update, subscriptions: subs});
+	});
+var _elm_lang$navigation$Navigation$programWithFlags = F2(
+	function (locationToMessage, stuff) {
+		var init = function (flags) {
+			return A2(
+				stuff.init,
+				flags,
+				_elm_lang$navigation$Native_Navigation.getLocation(
+					{ctor: '_Tuple0'}));
+		};
+		var subs = function (model) {
+			return _elm_lang$core$Platform_Sub$batch(
+				{
+					ctor: '::',
+					_0: _elm_lang$navigation$Navigation$subscription(
+						_elm_lang$navigation$Navigation$Monitor(locationToMessage)),
+					_1: {
+						ctor: '::',
+						_0: stuff.subscriptions(model),
+						_1: {ctor: '[]'}
+					}
+				});
+		};
+		return _elm_lang$html$Html$programWithFlags(
+			{init: init, view: stuff.view, update: stuff.update, subscriptions: subs});
+	});
+var _elm_lang$navigation$Navigation$subMap = F2(
+	function (func, _p7) {
+		var _p8 = _p7;
+		return _elm_lang$navigation$Navigation$Monitor(
+			function (_p9) {
+				return func(
+					_p8._0(_p9));
+			});
+	});
+var _elm_lang$navigation$Navigation$InternetExplorer = F2(
+	function (a, b) {
+		return {ctor: 'InternetExplorer', _0: a, _1: b};
+	});
+var _elm_lang$navigation$Navigation$Normal = function (a) {
+	return {ctor: 'Normal', _0: a};
+};
+var _elm_lang$navigation$Navigation$spawnPopWatcher = function (router) {
+	var reportLocation = function (_p10) {
+		return A2(
+			_elm_lang$core$Platform$sendToSelf,
+			router,
+			_elm_lang$navigation$Native_Navigation.getLocation(
+				{ctor: '_Tuple0'}));
+	};
+	return _elm_lang$navigation$Native_Navigation.isInternetExplorer11(
+		{ctor: '_Tuple0'}) ? A3(
+		_elm_lang$core$Task$map2,
+		_elm_lang$navigation$Navigation$InternetExplorer,
+		_elm_lang$core$Process$spawn(
+			A3(_elm_lang$dom$Dom_LowLevel$onWindow, 'popstate', _elm_lang$core$Json_Decode$value, reportLocation)),
+		_elm_lang$core$Process$spawn(
+			A3(_elm_lang$dom$Dom_LowLevel$onWindow, 'hashchange', _elm_lang$core$Json_Decode$value, reportLocation))) : A2(
+		_elm_lang$core$Task$map,
+		_elm_lang$navigation$Navigation$Normal,
+		_elm_lang$core$Process$spawn(
+			A3(_elm_lang$dom$Dom_LowLevel$onWindow, 'popstate', _elm_lang$core$Json_Decode$value, reportLocation)));
+};
+var _elm_lang$navigation$Navigation$onEffects = F4(
+	function (router, cmds, subs, _p11) {
+		var _p12 = _p11;
+		var _p15 = _p12.popWatcher;
+		var stepState = function () {
+			var _p13 = {ctor: '_Tuple2', _0: subs, _1: _p15};
+			_v6_2:
+			do {
+				if (_p13._0.ctor === '[]') {
+					if (_p13._1.ctor === 'Just') {
+						return A2(
+							_elm_lang$navigation$Navigation_ops['&>'],
+							_elm_lang$navigation$Navigation$killPopWatcher(_p13._1._0),
+							_elm_lang$core$Task$succeed(
+								A2(_elm_lang$navigation$Navigation$State, subs, _elm_lang$core$Maybe$Nothing)));
+					} else {
+						break _v6_2;
+					}
+				} else {
+					if (_p13._1.ctor === 'Nothing') {
+						return A2(
+							_elm_lang$core$Task$map,
+							function (_p14) {
+								return A2(
+									_elm_lang$navigation$Navigation$State,
+									subs,
+									_elm_lang$core$Maybe$Just(_p14));
+							},
+							_elm_lang$navigation$Navigation$spawnPopWatcher(router));
+					} else {
+						break _v6_2;
+					}
+				}
+			} while(false);
+			return _elm_lang$core$Task$succeed(
+				A2(_elm_lang$navigation$Navigation$State, subs, _p15));
+		}();
+		return A2(
+			_elm_lang$navigation$Navigation_ops['&>'],
+			_elm_lang$core$Task$sequence(
+				A2(
+					_elm_lang$core$List$map,
+					A2(_elm_lang$navigation$Navigation$cmdHelp, router, subs),
+					cmds)),
+			stepState);
+	});
+_elm_lang$core$Native_Platform.effectManagers['Navigation'] = {pkg: 'elm-lang/navigation', init: _elm_lang$navigation$Navigation$init, onEffects: _elm_lang$navigation$Navigation$onEffects, onSelfMsg: _elm_lang$navigation$Navigation$onSelfMsg, tag: 'fx', cmdMap: _elm_lang$navigation$Navigation$cmdMap, subMap: _elm_lang$navigation$Navigation$subMap};
+
 var _user$project$LALGinar$makeIcon = function (seminar) {
 	var s = _elm_lang$core$List$head(
 		A2(
@@ -17079,7 +17481,13 @@ var _user$project$People$viewAssociate = function (associate) {
 						A2(
 							_elm_lang$core$Basics_ops['++'],
 							associate.role,
-							_user$project$Utils$parentheses(associate.year)))),
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								' from ',
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									associate.from,
+									_user$project$Utils$parentheses(associate.year)))))),
 				_1: {ctor: '[]'}
 			}
 		});
@@ -17127,61 +17535,9 @@ var _user$project$People$elev_ = F2(
 var _user$project$People$defaultModel = {
 	mdl: _debois$elm_mdl$Material$model,
 	raised: '',
-	members: {ctor: '[]'}
-};
-var _user$project$People$student = F3(
-	function (name, role, year) {
-		return {name: name, role: role, year: year};
-	});
-var _user$project$People$students = {
-	ctor: '::',
-	_0: A3(_user$project$People$student, 'Luka Hauptman', 'teaching assistant, PhD student', ''),
-	_1: {
-		ctor: '::',
-		_0: A3(_user$project$People$student, 'Mitja Bezenšek', 'young researcher, PhD student', ''),
-		_1: {
-			ctor: '::',
-			_0: A3(_user$project$People$student, 'Nikolaj Janko', 'summer school, demonstrator, project member', '2012-2015'),
-			_1: {
-				ctor: '::',
-				_0: A3(_user$project$People$student, 'Tadej Borovšak', 'summer school, lalginar, demonstrator', '2013-2014'),
-				_1: {
-					ctor: '::',
-					_0: A3(_user$project$People$student, 'Sven Cerk', 'subgraph isomorphisms, summer school', '2014'),
-					_1: {
-						ctor: '::',
-						_0: A3(_user$project$People$student, 'Klemen Kloboves', 'SIC/XE toolchain, C++', '2013'),
-						_1: {ctor: '[]'}
-					}
-				}
-			}
-		}
-	}
-};
-var _user$project$People$associate = F4(
-	function (name, role, from, year) {
-		return {name: name, role: role, from: from, year: year};
-	});
-var _user$project$People$associates = {
-	ctor: '::',
-	_0: A4(_user$project$People$associate, 'Vojtech Vorel', 'visiting student', 'Prague, Czech', '2016'),
-	_1: {
-		ctor: '::',
-		_0: A4(_user$project$People$associate, 'Jan Pérhač', 'visiting student', 'Košice, Slovakia', '2016'),
-		_1: {
-			ctor: '::',
-			_0: A4(_user$project$People$associate, 'Ivan Halupka', 'visiting student', 'Košice, Slovakia', '2014'),
-			_1: {
-				ctor: '::',
-				_0: A4(_user$project$People$associate, 'Christophe Rapine', 'visiting researcher', 'Grenoble, France', '2002'),
-				_1: {
-					ctor: '::',
-					_0: A4(_user$project$People$associate, 'Amine Mahjoub', 'visiting researcher', 'Grenoble, France', '2002'),
-					_1: {ctor: '[]'}
-				}
-			}
-		}
-	}
+	members: {ctor: '[]'},
+	associates: {ctor: '[]'},
+	students: {ctor: '[]'}
 };
 var _user$project$People$Member = F6(
 	function (a, b, c, d, e, f) {
@@ -17200,24 +17556,68 @@ var _user$project$People$Associate = F4(
 	function (a, b, c, d) {
 		return {name: a, role: b, from: c, year: d};
 	});
+var _user$project$People$associateDecoder = A5(
+	_elm_lang$core$Json_Decode$map4,
+	_user$project$People$Associate,
+	A2(_elm_lang$core$Json_Decode$field, 'name', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'role', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'from', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'year', _elm_lang$core$Json_Decode$string));
 var _user$project$People$Student = F3(
 	function (a, b, c) {
 		return {name: a, role: b, year: c};
 	});
-var _user$project$People$Model = F3(
-	function (a, b, c) {
-		return {mdl: a, raised: b, members: c};
+var _user$project$People$studentDecoder = A4(
+	_elm_lang$core$Json_Decode$map3,
+	_user$project$People$Student,
+	A2(_elm_lang$core$Json_Decode$field, 'name', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'role', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'year', _elm_lang$core$Json_Decode$string));
+var _user$project$People$Model = F5(
+	function (a, b, c, d, e) {
+		return {mdl: a, raised: b, members: c, associates: d, students: e};
 	});
-var _user$project$People$UpdateMembers = function (a) {
-	return {ctor: 'UpdateMembers', _0: a};
+var _user$project$People$FetchStudents = function (a) {
+	return {ctor: 'FetchStudents', _0: a};
 };
-var _user$project$People$init = A2(
-	_elm_lang$http$Http$send,
-	_user$project$People$UpdateMembers,
-	A2(
-		_elm_lang$http$Http$get,
-		'data/members.json',
-		_elm_lang$core$Json_Decode$list(_user$project$People$memberDecoder)));
+var _user$project$People$FetchAssociates = function (a) {
+	return {ctor: 'FetchAssociates', _0: a};
+};
+var _user$project$People$FetchMembers = function (a) {
+	return {ctor: 'FetchMembers', _0: a};
+};
+var _user$project$People$init = _elm_lang$core$Platform_Cmd$batch(
+	{
+		ctor: '::',
+		_0: A2(
+			_elm_lang$http$Http$send,
+			_user$project$People$FetchMembers,
+			A2(
+				_elm_lang$http$Http$get,
+				'data/members.json',
+				_elm_lang$core$Json_Decode$list(_user$project$People$memberDecoder))),
+		_1: {
+			ctor: '::',
+			_0: A2(
+				_elm_lang$http$Http$send,
+				_user$project$People$FetchAssociates,
+				A2(
+					_elm_lang$http$Http$get,
+					'data/associates.json',
+					_elm_lang$core$Json_Decode$list(_user$project$People$associateDecoder))),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$http$Http$send,
+					_user$project$People$FetchStudents,
+					A2(
+						_elm_lang$http$Http$get,
+						'data/students.json',
+						_elm_lang$core$Json_Decode$list(_user$project$People$studentDecoder))),
+				_1: {ctor: '[]'}
+			}
+		}
+	});
 var _user$project$People$Raise = function (a) {
 	return {ctor: 'Raise', _0: a};
 };
@@ -17402,7 +17802,7 @@ var _user$project$People$view = function (model) {
 								function (x) {
 									return _user$project$People$viewAssociate(x);
 								},
-								_user$project$People$associates)),
+								model.associates)),
 						_1: {
 							ctor: '::',
 							_0: A2(
@@ -17423,7 +17823,7 @@ var _user$project$People$view = function (model) {
 										function (x) {
 											return _user$project$People$viewStudent(x);
 										},
-										_user$project$People$students)),
+										model.students)),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -17449,13 +17849,37 @@ var _user$project$People$update = F2(
 						{raised: _p0._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
-			default:
+			case 'FetchMembers':
 				if (_p0._0.ctor === 'Ok') {
 					return {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
 							model,
 							{members: _p0._0._0}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				} else {
+					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+				}
+			case 'FetchAssociates':
+				if (_p0._0.ctor === 'Ok') {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{associates: _p0._0._0}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				} else {
+					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+				}
+			default:
+				if (_p0._0.ctor === 'Ok') {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{students: _p0._0._0}),
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
 				} else {
@@ -17809,7 +18233,7 @@ var _user$project$Publications$viewBook = F3(
 								_debois$elm_mdl$Material_Grid$cell,
 								{
 									ctor: '::',
-									_0: A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$All, 3),
+									_0: A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$All, 4),
 									_1: {ctor: '[]'}
 								},
 								{
@@ -17834,7 +18258,7 @@ var _user$project$Publications$viewBook = F3(
 									_debois$elm_mdl$Material_Grid$cell,
 									{
 										ctor: '::',
-										_0: A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$All, 6),
+										_0: A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$All, 8),
 										_1: {ctor: '[]'}
 									},
 									desc),
@@ -18178,6 +18602,82 @@ var _user$project$Main$viewResearch = F3(
 			}
 		};
 	});
+var _user$project$Main$viewLalginar = A2(
+	_debois$elm_mdl$Material_Card$view,
+	{
+		ctor: '::',
+		_0: A2(_debois$elm_mdl$Material_Options$css, 'width', '100%'),
+		_1: {
+			ctor: '::',
+			_0: A2(_debois$elm_mdl$Material_Options$css, 'padding', '0px'),
+			_1: {
+				ctor: '::',
+				_0: _debois$elm_mdl$Material_Elevation$e2,
+				_1: {ctor: '[]'}
+			}
+		}
+	},
+	{
+		ctor: '::',
+		_0: A2(
+			_debois$elm_mdl$Material_Card$title,
+			{
+				ctor: '::',
+				_0: _debois$elm_mdl$Material_Options$scrim(0.3),
+				_1: {
+					ctor: '::',
+					_0: _debois$elm_mdl$Material_Color$background(_user$project$Utils$tabs_bg),
+					_1: {ctor: '[]'}
+				}
+			},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text('LALGinar'),
+				_1: {ctor: '[]'}
+			}),
+		_1: {
+			ctor: '::',
+			_0: A2(
+				_debois$elm_mdl$Material_Card$text,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Our informal laboratory seminar about various topics broadly related to computer science.'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_debois$elm_mdl$Material_Card$actions,
+					{
+						ctor: '::',
+						_0: _debois$elm_mdl$Material_Card$border,
+						_1: {
+							ctor: '::',
+							_0: _debois$elm_mdl$Material_Typography$center,
+							_1: {ctor: '[]'}
+						}
+					},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$a,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$href('#lalginar'),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text('Click here!'),
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			}
+		}
+	});
 var _user$project$Main$viewMain = function (model) {
 	return A2(
 		_debois$elm_mdl$Material_Card$view,
@@ -18257,7 +18757,7 @@ var _user$project$Main$viewMain = function (model) {
 								},
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html$text('Laboratory of Algorithms and Data Structures'),
+									_0: _elm_lang$html$Html$text('Laboratory of Algorithmics'),
 									_1: {ctor: '[]'}
 								}),
 							_1: {
@@ -18303,30 +18803,7 @@ var _user$project$Main$viewMain = function (model) {
 														_elm_lang$html$Html$hr,
 														{ctor: '[]'},
 														{ctor: '[]'}),
-													_1: {
-														ctor: '::',
-														_0: _elm_lang$html$Html$text('We conduct research and development as well as teaching in the following areas:'),
-														_1: {
-															ctor: '::',
-															_0: A2(
-																_debois$elm_mdl$Material_Grid$grid,
-																{ctor: '[]'},
-																A2(
-																	_elm_lang$core$Basics_ops['++'],
-																	A3(_user$project$Main$viewResearch, 'build', 'Algorithm engineering and experimental algorithmics', 'implementing and optimizing algorithms to perfom well in practice, experimental evaluation of algorithm efficiency'),
-																	A2(
-																		_elm_lang$core$Basics_ops['++'],
-																		A3(_user$project$Main$viewResearch, 'done_all', 'Parallel and distributed computation and algorithms', 'using parallelism to enhance algorithms, multithreading, message passing, general purpose graphic processing unit, dataflow computing, grid computing'),
-																		A2(
-																			_elm_lang$core$Basics_ops['++'],
-																			A3(_user$project$Main$viewResearch, 'bug_report', 'Compiler design and programming languages', 'modern parsing methods, syntax and lexical analysis, parse trees, code optimization and generation, functional programming'),
-																			A2(
-																				_elm_lang$core$Basics_ops['++'],
-																				A3(_user$project$Main$viewResearch, 'apps', 'System software engineering and operating systems', 'assemblers, linkers, virtual machines, emulators, operating systems, virtualization and containers, system programming'),
-																				A3(_user$project$Main$viewResearch, 'spa', 'Theory of algorithms, computability and complexity theory', 'approximation and randomised algorithms, exact exponential algorithms and fixed parameter tractability, combinatorial optimization, problems on graphs')))))),
-															_1: {ctor: '[]'}
-														}
-													}
+													_1: {ctor: '[]'}
 												}
 											}
 										}
@@ -18334,7 +18811,78 @@ var _user$project$Main$viewMain = function (model) {
 								}
 							}
 						}),
-					_1: {ctor: '[]'}
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_debois$elm_mdl$Material_Card$text,
+							{
+								ctor: '::',
+								_0: A2(_debois$elm_mdl$Material_Options$css, 'width', '100%'),
+								_1: {
+									ctor: '::',
+									_0: A2(_debois$elm_mdl$Material_Options$css, 'box-sizing', 'border-box'),
+									_1: {ctor: '[]'}
+								}
+							},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text('We conduct research and development as well as teaching in the following areas:'),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_debois$elm_mdl$Material_Grid$grid,
+										{ctor: '[]'},
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											A3(_user$project$Main$viewResearch, 'build', 'Algorithm engineering and experimental algorithmics', 'implementing and optimizing algorithms to perfom well in practice, experimental evaluation of algorithm efficiency'),
+											A2(
+												_elm_lang$core$Basics_ops['++'],
+												A3(_user$project$Main$viewResearch, 'done_all', 'Parallel and distributed computation and algorithms', 'using parallelism to enhance algorithms, multithreading, message passing, general purpose graphic processing unit, dataflow computing, grid computing'),
+												A2(
+													_elm_lang$core$Basics_ops['++'],
+													A3(_user$project$Main$viewResearch, 'bug_report', 'Compiler design and programming languages', 'modern parsing methods, syntax and lexical analysis, parse trees, code optimization and generation, functional programming'),
+													A2(
+														_elm_lang$core$Basics_ops['++'],
+														A3(_user$project$Main$viewResearch, 'apps', 'System software engineering and operating systems', 'assemblers, linkers, virtual machines, emulators, operating systems, virtualization and containers, system programming'),
+														A3(_user$project$Main$viewResearch, 'spa', 'Theory of algorithms, computability and complexity theory', 'approximation and randomised algorithms, exact exponential algorithms and fixed parameter tractability, combinatorial optimization, problems on graphs')))))),
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_debois$elm_mdl$Material_Grid$grid,
+											{ctor: '[]'},
+											{
+												ctor: '::',
+												_0: A2(
+													_debois$elm_mdl$Material_Grid$cell,
+													{
+														ctor: '::',
+														_0: A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$All, 6),
+														_1: {ctor: '[]'}
+													},
+													{ctor: '[]'}),
+												_1: {
+													ctor: '::',
+													_0: A2(
+														_debois$elm_mdl$Material_Grid$cell,
+														{
+															ctor: '::',
+															_0: A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$All, 6),
+															_1: {ctor: '[]'}
+														},
+														{
+															ctor: '::',
+															_0: _user$project$Main$viewLalginar,
+															_1: {ctor: '[]'}
+														}),
+													_1: {ctor: '[]'}
+												}
+											}),
+										_1: {ctor: '[]'}
+									}
+								}
+							}),
+						_1: {ctor: '[]'}
+					}
 				}
 			}
 		});
@@ -18506,7 +19054,7 @@ var _user$project$Main$viewFooter = A2(
 						},
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html$text('Laboratory for Algorithms and Data Structures'),
+							_0: _elm_lang$html$Html$text('Laboratory of Algorithmics'),
 							_1: {
 								ctor: '::',
 								_0: A2(
@@ -18731,7 +19279,7 @@ var _user$project$Main$viewHeader = function (model) {
 							{ctor: '[]'},
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html$text('Laboratory for Algorithms and Data Structures'),
+								_0: _elm_lang$html$Html$text('Laboratory of Algorithmics'),
 								_1: {ctor: '[]'}
 							}),
 						_1: {
@@ -18784,14 +19332,70 @@ var _user$project$Main$lift = F4(
 			_1: A2(_elm_lang$core$Platform_Cmd$map, liftsubmsg, _p2._1)
 		};
 	});
-var _user$project$Main$defaultModel = {
-	mdl: A2(_debois$elm_mdl$Material_Layout$setTabsWidth, 50, _debois$elm_mdl$Material$model),
-	tab: 0,
-	people: _user$project$People$defaultModel,
-	teaching: _user$project$Teaching$defaultModel,
-	research: _user$project$Research$defaultModel,
-	publications: _user$project$Publications$defaultModel,
-	seminars: _user$project$LALGinar$defaultModel
+var _user$project$Main$ish = F2(
+	function (s, _p3) {
+		var _p4 = _p3;
+		return _elm_lang$core$Native_Utils.eq(s, _p4._1);
+	});
+var _user$project$Main$hashes = {
+	ctor: '::',
+	_0: '#home',
+	_1: {
+		ctor: '::',
+		_0: '#people',
+		_1: {
+			ctor: '::',
+			_0: '#teaching',
+			_1: {
+				ctor: '::',
+				_0: '#research',
+				_1: {
+					ctor: '::',
+					_0: '#publications',
+					_1: {
+						ctor: '::',
+						_0: '#lalginar',
+						_1: {ctor: '[]'}
+					}
+				}
+			}
+		}
+	}
+};
+var _user$project$Main$tab2hash = function (t) {
+	return A2(
+		_elm_lang$core$Maybe$withDefault,
+		'',
+		_elm_lang$core$List$head(
+			A2(_elm_lang$core$List$drop, t, _user$project$Main$hashes)));
+};
+var _user$project$Main$hash2tab = function (hash) {
+	return _elm_lang$core$Tuple$first(
+		A2(
+			_elm_lang$core$Maybe$withDefault,
+			{ctor: '_Tuple2', _0: 0, _1: ''},
+			_elm_lang$core$List$head(
+				A2(
+					_elm_lang$core$List$filter,
+					_user$project$Main$ish(hash),
+					A2(
+						_elm_lang$core$List$indexedMap,
+						F2(
+							function (v0, v1) {
+								return {ctor: '_Tuple2', _0: v0, _1: v1};
+							}),
+						_user$project$Main$hashes)))));
+};
+var _user$project$Main$defaultModel = function (location) {
+	return {
+		mdl: A2(_debois$elm_mdl$Material_Layout$setTabsWidth, 50, _debois$elm_mdl$Material$model),
+		tab: _user$project$Main$hash2tab(location.hash),
+		people: _user$project$People$defaultModel,
+		teaching: _user$project$Teaching$defaultModel,
+		research: _user$project$Research$defaultModel,
+		publications: _user$project$Publications$defaultModel,
+		seminars: _user$project$LALGinar$defaultModel
+	};
 };
 var _user$project$Main$Model = F7(
 	function (a, b, c, d, e, f, g) {
@@ -18849,8 +19453,8 @@ var _user$project$Main$viewPage = function (model) {
 			_1: {
 				ctor: '::',
 				_0: function () {
-					var _p3 = model.tab;
-					switch (_p3) {
+					var _p5 = model.tab;
+					switch (_p5) {
 						case 0:
 							return _user$project$Main$viewMain(model);
 						case 1:
@@ -18896,22 +19500,37 @@ var _user$project$Main$viewPage = function (model) {
 var _user$project$Main$SelectTab = function (a) {
 	return {ctor: 'SelectTab', _0: a};
 };
+var _user$project$Main$UrlChange = function (a) {
+	return {ctor: 'UrlChange', _0: a};
+};
 var _user$project$Main$Mdl = function (a) {
 	return {ctor: 'Mdl', _0: a};
 };
 var _user$project$Main$update = F2(
 	function (msg, model) {
-		var _p4 = msg;
-		switch (_p4.ctor) {
+		var _p6 = msg;
+		switch (_p6.ctor) {
 			case 'Mdl':
-				return A3(_debois$elm_mdl$Material$update, _user$project$Main$Mdl, _p4._0, model);
-			case 'SelectTab':
+				return A3(_debois$elm_mdl$Material$update, _user$project$Main$Mdl, _p6._0, model);
+			case 'UrlChange':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{tab: _p4._0}),
+						{
+							tab: _user$project$Main$hash2tab(_p6._0.hash)
+						}),
 					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'SelectTab':
+				var _p7 = _p6._0;
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{tab: _p7}),
+					_1: _elm_lang$navigation$Navigation$newUrl(
+						_user$project$Main$tab2hash(_p7))
 				};
 			case 'PeopleMsg':
 				return A4(
@@ -18924,7 +19543,7 @@ var _user$project$Main$update = F2(
 								{people: x});
 						}),
 					_user$project$Main$PeopleMsg,
-					A2(_user$project$People$update, _p4._0, model.people));
+					A2(_user$project$People$update, _p6._0, model.people));
 			case 'TeachingMsg':
 				return A4(
 					_user$project$Main$lift,
@@ -18936,14 +19555,15 @@ var _user$project$Main$update = F2(
 								{teaching: x});
 						}),
 					_user$project$Main$TeachingMsg,
-					A2(_user$project$Teaching$update, _p4._0, model.teaching));
+					A2(_user$project$Teaching$update, _p6._0, model.teaching));
 			case 'ResearchMsg':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{tab: 5}),
-					_1: _elm_lang$core$Platform_Cmd$none
+					_1: _elm_lang$navigation$Navigation$newUrl(
+						_user$project$Main$tab2hash(5))
 				};
 			case 'PublicationsMsg':
 				return A4(
@@ -18956,7 +19576,7 @@ var _user$project$Main$update = F2(
 								{publications: x});
 						}),
 					_user$project$Main$PublicationsMsg,
-					A2(_user$project$Publications$update, _p4._0, model.publications));
+					A2(_user$project$Publications$update, _p6._0, model.publications));
 			default:
 				return A4(
 					_user$project$Main$lift,
@@ -18968,7 +19588,7 @@ var _user$project$Main$update = F2(
 								{seminars: x});
 						}),
 					_user$project$Main$LALGinarMsg,
-					A2(_user$project$LALGinar$update, _p4._0, model.seminars));
+					A2(_user$project$LALGinar$update, _p6._0, model.seminars));
 		}
 	});
 var _user$project$Main$view_ = function (model) {
@@ -19035,27 +19655,35 @@ var _user$project$Main$view = function (model) {
 		_user$project$Utils$accentedHue,
 		A2(_elm_lang$html$Html_Lazy$lazy, _user$project$Main$view_, model));
 };
-var _user$project$Main$init = _elm_lang$core$Platform_Cmd$batch(
-	{
-		ctor: '::',
-		_0: _debois$elm_mdl$Material$init(_user$project$Main$Mdl),
-		_1: {
-			ctor: '::',
-			_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$PeopleMsg, _user$project$People$init),
-			_1: {
+var _user$project$Main$init = function (location) {
+	return {
+		ctor: '_Tuple2',
+		_0: _user$project$Main$defaultModel(location),
+		_1: _elm_lang$core$Platform_Cmd$batch(
+			{
 				ctor: '::',
-				_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$TeachingMsg, _user$project$Teaching$init),
+				_0: _debois$elm_mdl$Material$init(_user$project$Main$Mdl),
 				_1: {
 					ctor: '::',
-					_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$LALGinarMsg, _user$project$LALGinar$init),
-					_1: {ctor: '[]'}
+					_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$PeopleMsg, _user$project$People$init),
+					_1: {
+						ctor: '::',
+						_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$TeachingMsg, _user$project$Teaching$init),
+						_1: {
+							ctor: '::',
+							_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$LALGinarMsg, _user$project$LALGinar$init),
+							_1: {ctor: '[]'}
+						}
+					}
 				}
-			}
-		}
-	});
-var _user$project$Main$main = _elm_lang$html$Html$program(
+			})
+	};
+};
+var _user$project$Main$main = A2(
+	_elm_lang$navigation$Navigation$program,
+	_user$project$Main$UrlChange,
 	{
-		init: {ctor: '_Tuple2', _0: _user$project$Main$defaultModel, _1: _user$project$Main$init},
+		init: _user$project$Main$init,
 		update: _user$project$Main$update,
 		subscriptions: function (model) {
 			return _elm_lang$core$Platform_Sub$batch(

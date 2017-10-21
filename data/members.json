@@ -20,6 +20,13 @@
     "email" : "tomaz.dobravec@fri.uni-lj.si",
     "room"  : "R2.61"
   },
+  { "name"  : "Peter Gabrovšek",
+    "title" : "Teaching Assistant",
+    "img"   : "mem-gabrovsek.png",
+    "phone" : "+386 1 479 8232",
+    "email" : "peter.gabrovsek@fri.uni-lj.si",
+    "room"  : "R2.30"
+  },
   { "name"  : "Jurij Mihelič",
     "title" : "Assistant Professor",
     "img"   : "mem-mihelic.png",

@@ -200,7 +200,7 @@ viewAssociate : Associate -> Html Msg
 viewAssociate associate =
     li []
         [ b [] [ text associate.name ]
-        , text (": " ++ associate.role ++ parentheses associate.year)
+        , text (": " ++ associate.role ++ " from " ++ associate.from ++ parentheses associate.year)
         ]
 
 
